@@ -1,0 +1,3 @@
+C:\Users\SoftOne\source\repos\SportsClubFaratechno\SportClubFrontEnd\obj\Debug\SportClubFrontEnd.njsproj.AssemblyReference.cache
+C:\Users\SoftOne\source\repos\SportsClubFaratechno\SportClubFrontEnd\obj\Debug\SportClubFrontEnd.njsproj.CoreCompileInputs.cache
+C:\Users\SoftOne\source\repos\SportsClubFaratechno\SportClubFrontEnd\bin\Microsoft.NodejsTools.WebRole.dll

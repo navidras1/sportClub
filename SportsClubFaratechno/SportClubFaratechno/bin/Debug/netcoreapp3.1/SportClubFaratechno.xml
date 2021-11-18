@@ -1,0 +1,415 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SportClubFaratechno</name>
+    </assembly>
+    <members>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.CreateRole(SportClubFaratechno.Models.IdentityRoleModel)">
+            <summary>
+            ساخت نقش کاربر
+            </summary>
+            <param name="identityRole"> مدل دارای پارامتر 
+            rolename </param>
+            <returns> در صورت تایید بازگشت کد 200 و
+            در غیر این صورت بازگشت کد 302 یا 406</returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.AssignRoleToUser(SportClubFaratechno.Models.RoleUserModel)">
+            <summary>
+            تخصیص نقش به هر کاربر
+            </summary>
+            <param name="roleUserModel"> مدلی شامل نام کاربر و نام نقش کاربر </param>
+            <returns> تایید 200
+            عدم تایید 404 یا 406 </returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.RemoveRoleFromUser(SportClubFaratechno.Models.RoleUserModel)">
+            <summary>
+            حذف نقش تخصیص داده شده به کاربر از کاربر
+            </summary>
+            <param name="roleUserModel"> مدلی شامل نام کاربر و نام نقش کاربر  </param>
+            <returns> تایید 200
+             عدم تایید 304 و 404 </returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.ResetPasswordByAdmin(SportClubFaratechno.Models.LoginModel)">
+            <summary>
+            تغییر 
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.ChangePasswordByUser(SportClubFaratechno.Models.LoginChangePasswordModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.ListOfRoles">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.ListOfUsersAsync">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.RegisterAccess(SportClubFaratechno.Models.RegisterAccessModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.ListOfAccesses">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.EditAccess(SportClubFaratechno.Models.EditAccessModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.RegisterUserAccessAsync(SportClubFaratechno.Models.RegisterUserAccessModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.EditUserAccess(SportClubFaratechno.Models.EditUserAccessModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.RegisterRoleAccessAsync(SportClubFaratechno.Models.RegisterRoleAccessModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.ListOfAccessRoll">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.EditRoleAccessAsync(SportClubFaratechno.Models.EditRoleAccessModel)">
+            <summary>
+            
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.AuthenticateController.RemoveRoleAccessAsync(System.Int64)">
+            <summary>
+            
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.BuffetController.AddBuffetItem(SportClubFaratechno.Models.AddBuffetItemModel)">
+            <summary>
+            اضافه کردن جنس به بوفه
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.BuffetController.UpdateBuffetItem(SportClubFaratechno.Models.UpdateBuffetItemModel)">
+            <summary>
+            ویرایش قیمت و تعداد جنس
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.BuffetController.RemoveBuffetItem(System.Int64)">
+            <summary>
+            حذف کالا
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.CabinetController.CreateCabinet(SportClubFaratechno.Models.CreateCabinetModel)">
+            <summary>
+            ایجاد کمد
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.CabinetController.DeleteCabinet(System.Collections.Generic.List{System.Int64})">
+            <summary>
+            حذف کمد
+            </summary>
+            <param name="ids"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.CabinetController.AssignCabinetToUser(System.Collections.Generic.List{SportClubFaratechno.Models.AssignCabinetToUserModel})">
+            <summary>
+            انتساب کمد به کاربر
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.CabinetController.UnassignCabinetFromUser(System.Collections.Generic.List{SportClubFaratechno.Models.AssignCabinetToUserModel})">
+            <summary>
+            باز ستانی کمد از کاربر
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.CabinetController.GetListOfCabinets">
+            <summary>
+            لیست کمدها
+            </summary>
+            <param name="spc"></param>
+            <returns></returns>
+        </member>
+        <member name="T:SportClubFaratechno.WebApi.DefinitionsController">
+            <summary>
+            تعاریف
+            </summary>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.CreateDetailBuffetItems(SportClubFaratechno.Models.CreateDetailModel)">
+            <summary>
+            اضافه کردن اقلام بوفه
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.ListOfBuffetItems">
+            <summary>
+            مشاهده اقلام بوفه
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.UpdateBuffetItem(SportClubFaratechno.Models.UpdateDetailModel)">
+            <summary>
+            ویرایش اقلام بوفه
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.CreateDetailSalon(SportClubFaratechno.Models.CreateDetailModel)">
+            <summary>
+            اضافه کردن سالن
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.GetSalonList">
+            <summary>
+            مشاهده لیست سالن
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.UpdateSalon(SportClubFaratechno.Models.UpdateDetailModel)">
+            <summary>
+            ویرایش سالن
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.CreateDetailSports(SportClubFaratechno.Models.CreateDetailModel)">
+            <summary>
+            ایجاد رشته ورزشی
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.GetSportsList">
+            <summary>
+            مشاهده لیست رشته های ورزشی
+            </summary>
+            <returns></returns>
+            
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.UpdateSports(SportClubFaratechno.Models.UpdateDetailModel)">
+            <summary>
+            ویرایش رشته ورزشی
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+            
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.CreateDetailBuffet(SportClubFaratechno.Models.CreateDetailModel)">
+            <summary>
+            ایجاد بوفه
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.GetBuffetList">
+            <summary>
+            مشاهده لیست بوفه ها
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.UpdateBuffet(SportClubFaratechno.Models.UpdateDetailModel)">
+            <summary>
+            ویرایش بوفه
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.CreateDetailCabinetType(SportClubFaratechno.Models.CreateDetailModel)">
+            <summary>
+            ایجاد نوع کمد
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.GetCabinetTypeList">
+            <summary>
+            مشاهده لیست نوع کمدها
+            </summary>
+            <returns></returns>
+            
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.DefinitionsController.UpdateCabinetType(SportClubFaratechno.Models.UpdateDetailModel)">
+            <summary>
+            ویرایش نوع کمد
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SalonSportController.AssignSportToSalon(SportClubFaratechno.Models.AssignSportToSalonModel)">
+            <summary>
+            انتساب ورزش به سالن
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SalonSportController.UpdateSalonSport(SportClubFaratechno.Models.UpdateSalonSportModel)">
+            <summary>
+            ویرایش سالن ورزش
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SalonSportController.DeleteSalonSport(System.Int64)">
+            <summary>
+            حذف سالن ورزش
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SalonSportController.GetListOfSportSalon">
+            <summary>
+            لیست سالن ورزش
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SalonSportController.AddSalonEqueepmet(SportClubFaratechno.Models.AddSalonEqueepmetModel)">
+            <summary>
+            انتساب دستگاه به سالن
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SalonSportController.ListOfSalonEqueepments">
+            <summary>
+            لیست دستگاه ها
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SalonSportController.UpdateEqueepment(SportClubFaratechno.Models.UpdateEqueepmentModel)">
+            <summary>
+            ویرایش دستگاه
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SalonSportController.DeleteEqueepment(System.Int64)">
+            <summary>
+            حذف دستگاه
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SessionController.CreateSession(SportClubFaratechno.Models.CreateSalonSportSessionModel)">
+            <summary>
+            ایجاد دوره
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SessionController.EditSession(SportClubFaratechno.Models.EditSessionModel)">
+            <summary>
+            ویرایش دوره
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+            
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SessionController.ListOfSessions">
+            <summary>
+            لیست دوره ها
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SessionController.DeleteSession(System.Int64)">
+            <summary>
+            حذف دوره
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+            
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SessionController.CreateSessionDetail(SportClubFaratechno.Models.CreateSessionDetailModel)">
+            <summary>
+            تعریف جلسات جهت دوره خاص
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SessionController.EditSessionDetail(SportClubFaratechno.Models.EditSessionDetailModel)">
+            <summary>
+            ویرایش جلسه دوره
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SessionController.DeleteSesssionDetail(System.Int64)">
+            <summary>
+            حذف جلسه دوره
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SessionController.RegisterUserSession(SportClubFaratechno.Models.RegisterUserSessionModel)">
+            <summary>
+            ثبت نام کاربر 
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SessionController.UpdateUserSession(SportClubFaratechno.Models.UpdateUserSessionModel)">
+            <summary>
+            ویرایش کاربر دوره
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SessionController.DeleteUserSession(System.Int64)">
+            <summary>
+            حذف کاربر دوره
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SportClubFaratechno.WebApi.SessionController.EnterSessionUserTraffic(SportClubFaratechno.Models.EnterSessionUserTrafficModel)">
+            <summary>
+            ورود کاربر 
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
