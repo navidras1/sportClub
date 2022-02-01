@@ -31,7 +31,7 @@ namespace SportClubFaratechno.Models
         public string SubmissionDateShamsi { get; set; }
 
         [Required(ErrorMessage = "لطفا مردانه یا زنانه را وارد کنید.")]
-        public bool? Sex { get; set; }
+        public long? Sex { get; set; }
 
         public int? NumberOfPeople { get; set; }
 

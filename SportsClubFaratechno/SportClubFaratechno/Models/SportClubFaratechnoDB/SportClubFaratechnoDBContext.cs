@@ -12,7 +12,7 @@ namespace SportClubFaratechno.Models.SportClubFaratechnoDB
         public SportClubFaratechnoDBContext()
         {
         }
-        
+
         public SportClubFaratechnoDBContext(DbContextOptions<SportClubFaratechnoDBContext> options)
             : base(options)
         {
@@ -33,7 +33,7 @@ namespace SportClubFaratechno.Models.SportClubFaratechnoDB
 
         public virtual DbSet<BuffetDetail> BuffetDetail { get; set; }
         public virtual DbSet<Cabinet> Cabinet { get; set; }
-        
+
         public virtual DbSet<SalonBuffet> SalonBuffet { get; set; }
         public virtual DbSet<SalonCabinet> SalonCabinet { get; set; }
         public virtual DbSet<SalonEquipment> SalonEquipment { get; set; }
@@ -48,7 +48,16 @@ namespace SportClubFaratechno.Models.SportClubFaratechnoDB
         public virtual DbSet<UserCabinet> UserCabinet { get; set; }
         public virtual DbSet<UserEquimentUsage> UserEquimentUsage { get; set; }
         public virtual DbSet<UserExtraInfo> UserExtraInfo { get; set; }
+        public virtual DbSet<Club> Club { get; set; }
+        public virtual DbSet<ClubSalon> ClubSalon { get; set; }
+        public virtual DbSet<ClubCabinet> ClubCabinet { get; set; }
 
+        public virtual DbSet<SessionUserExerciseProgram> SessionUserExerciseProgram { get; set; }
 
+        public virtual DbSet<TrafficCabinet> TrafficCabinet { get; set; }
+
+        public virtual DbSet<BuffetItemTypeItem> BuffetItemTypeItem { get; set; }
+        public virtual DbSet<UserInsurance> UserInsurance { get; set; }
+        public virtual DbSet<Invoice> Invoice { get; set; }
     }
 }

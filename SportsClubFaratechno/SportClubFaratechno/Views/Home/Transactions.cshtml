@@ -1,0 +1,107 @@
+﻿
+@{
+    ViewData["Title"] = "تراکنش ها";
+    Layout = "~/Views/Shared/_VueLayout.cshtml";
+}
+
+<h1>تراکنش ها</h1>
+
+<v-data-table :headers="trnHeaders"
+              :items="trnTbl"
+              :items-per-page="5"
+              item-key="table_header_index"
+              class="elevation-1">
+    <template v-slot:body="{items}">
+        <tbody>
+            <tr v-for="item in items" :key="item.id" style="text-align:right" onclick="highliteTR(this)" @@click="selectedUserId=item.id; ">
+                <td>{{ item.userId }}</td>
+                <td>{{ item.trnType }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.trnSource }}</td>
+
+                <td>{{ item.description }}</td>
+                <td>{{ item.submissionDateShamsi }}</td>
+                <td>{{ item.incomeSpend }}</td>
+
+
+
+
+
+
+
+
+            </tr>
+        </tbody>
+    </template>
+
+</v-data-table>
+
+<v-snackbar v-model="snackbar"
+            :timeout="snackBarTimeout"
+            color="blue-grey">
+    {{ snackbarMessage }}
+</v-snackbar>
+
+@section VueComponents{
+    <script>
+        myMixin = {
+            data: {
+                snackbar: false,
+                snackbarMessage: "",
+
+                snackbarColor: "",
+                snackBarTimeout: 3000,
+                trnHeaders: [
+                    { text: 'نام کاربری', value: 'userId' },
+
+                    { text: 'نوع تراکنش', value: 'trnType' },
+
+                    { text: 'قیمت', value: 'price' },
+                    { text: 'منبع', value: 'trnSource' },
+                    { text: 'تعداد', value: 'description' },
+                    { text: 'تاریخ', value: 'submissionDateShamsi' },
+                    { text: 'دخل/خرج', value: 'incomeSpend' }
+
+                ],
+                trnTbl: [],
+            },
+            methods: {
+
+                showSnack: function (snackbarMessage) {
+                    this.snackbar = true;
+                    this.snackbarMessage = snackbarMessage;
+                },
+                GetTranactions: async function () {
+                    let model = {
+                        Model: null,
+                        Address: "/api/Transaction/ListOfTransactions"
+                    };
+                    let vv = await CallApi(model);
+                    this.trnTbl = vv.data;
+
+                }
+            },
+            created: function () {
+                this.GetTranactions();
+            }
+
+        }
+
+        
+
+        function highliteTR(tr) {
+
+            let theRows = tr.parentNode.rows;
+
+
+            for (let i = 0; i < theRows.length; i++) {
+                let ss = theRows[i];
+                ss.classList.remove("bg-info");
+
+            }
+            tr.classList.add("bg-info");
+
+        }
+    </script>
+}
+

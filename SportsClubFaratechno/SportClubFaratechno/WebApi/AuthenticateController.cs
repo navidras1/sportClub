@@ -117,6 +117,7 @@ namespace SportClubFaratechno.WebApi
                 UserName = model.Username
             };
             var result = await userManager.CreateAsync(user, model.Password);
+           
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -127,7 +128,7 @@ namespace SportClubFaratechno.WebApi
                 return StatusCode(StatusCodes.Status406NotAcceptable, result.Errors);
             }
             //
-            return Ok(new Response { Status = "Success", Message = "ساخت کاربر با موفقیت انجام شد!" });
+            return Ok(new Models.Response { Status = "Success", Message = "ساخت کاربر با موفقیت انجام شد!" , Data = new {userId= user.Id } });
         }
 
         
@@ -142,7 +143,7 @@ namespace SportClubFaratechno.WebApi
         /// rolename </param>
         /// <returns> در صورت تایید بازگشت کد 200 و
         /// در غیر این صورت بازگشت کد 302 یا 406</returns>
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("createRole")]
         public async Task<IActionResult> CreateRole([FromBody] IdentityRoleModel identityRole)
@@ -169,7 +170,7 @@ namespace SportClubFaratechno.WebApi
         /// <param name="roleUserModel"> مدلی شامل نام کاربر و نام نقش کاربر </param>
         /// <returns> تایید 200
         /// عدم تایید 404 یا 406 </returns>
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("assignRoleToUser")]
         public async Task<IActionResult> AssignRoleToUser(RoleUserModel roleUserModel)
@@ -291,13 +292,17 @@ namespace SportClubFaratechno.WebApi
         /// 
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("listOfRoles")]
         public IActionResult ListOfRoles()
         {
             var res = roleManager.Roles.Select(pp => new { id = pp.Id, RoleName = pp.Name }).ToList();
-            return Ok(res);
+
+            Models.Response response = new Models.Response();
+            response.Data = res;
+
+            return Ok(response);
 
         }
 
@@ -305,14 +310,20 @@ namespace SportClubFaratechno.WebApi
         /// 
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "Admin")]
+        /// 
+
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("listOfUsers")]
         public IActionResult ListOfUsersAsync()
         {
             var users = userManager.Users.ToList();
             var res = users.Select(pp => new { id = pp.Id, userName = pp.UserName, role = string.Join(',', userManager.GetRolesAsync(pp).Result.ToList()), Email = pp.Email, Phone = pp.PhoneNumber });
-            return Ok(res);
+
+            Models.Response response = new Response();
+            response.Data = res;
+
+            return Ok(response);
         }
 
         /// <summary>

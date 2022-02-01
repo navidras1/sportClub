@@ -48,6 +48,71 @@ namespace SportClubFaratechno.WebApi
             return Ok(res);
         }
 
+
+        /// <summary>
+        /// انتساب بوفه به سالن
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("AssignBuffetToSalon")]
+        public IActionResult AssignBuffetToSalon(AssignBuffetToSalonModel model)
+        {
+            var res = SCP.AssignBuffetToSalon(model);
+            return Ok(res);
+        }
+
+
+        /// <summary>
+        /// خرید از بوفه
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("PurchaseItem")]
+        public IActionResult PurchaseItem(PurchaseItemModel model)
+        {
+            var res = SCP.PurchaseItem(model);
+            return Ok(res);
+        }
+
+
+        /// <summary>
+        /// لیست بوفه های سالن
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("GetlistOfSalonBuffets")]
+        public IActionResult GetlistOfSalonBuffets(GetlistOfSalonBuffetsModel model)
+        {
+            var res = SCP.GetlistOfSalonBuffets(model);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// انتساب جنس به نوع جنس
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("AssignBuffetItemToBuffetItemType")]
+        public IActionResult AssignBuffetItemToBuffetItemType(AssignBuffetItemToBuffetItemTypeModel model)
+        {
+            var res = SCP.AssignBuffetItemToBuffetItemType(model);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// لیست کالا بر اساس نوع و سالن
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("GetListOfItemsByTypeBySalon")]
+        public IActionResult GetListOfItemsByTypeBySalon(GetListOfItemsByTypeByBuffetModel model)
+        {
+            var res = SCP.GetListOfItemsByTypeBySalon(model);
+            return Ok(res);
+        }
+
+
+
         // GET: api/<BuffetController>
         [HttpGet]
         public IEnumerable<string> Get()

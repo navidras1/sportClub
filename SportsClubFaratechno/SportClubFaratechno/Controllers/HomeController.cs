@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace SportClubFaratechno.Controllers
 {
+    //[FrontEndAuthentication]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -20,7 +21,10 @@ namespace SportClubFaratechno.Controllers
             _logger = logger;
         }
 
-        [FrontEndAuthentication]
+
+       
+
+        
         public IActionResult Index()
         {
             return View();
@@ -37,9 +41,50 @@ namespace SportClubFaratechno.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult Login()
+        public IActionResult Definition()
         {
             return View();
         }
+        
+        public IActionResult Salon()
+        {
+            return View();
+        }
+
+        public IActionResult Sports()
+        {
+            return View();
+        }
+
+        public IActionResult Buffet()
+        {
+            return View();
+        }
+
+        public IActionResult Users()
+        {
+            return View();
+        }
+
+        public IActionResult Roles()
+        {
+            return View();
+        }
+
+        public IActionResult Cabinet()
+        {
+            return View();
+        }
+
+        public IActionResult BuffetShop()
+        {
+            return View();
+        }
+
+        public IActionResult Transactions()
+        {
+            return View();
+        }
+
     }
 }

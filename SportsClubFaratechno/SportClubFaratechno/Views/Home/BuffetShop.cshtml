@@ -1,0 +1,432 @@
+﻿
+@{
+    ViewData["Title"] = "BuffetShop";
+    Layout = "~/Views/Shared/_VueLayout.cshtml";
+}
+
+<h1>بوفه</h1>
+<v-row>
+    <v-col cols="3">
+        <v-select v-model="clubSelect"
+                  :items="clubs"
+                  item-text="detailName"
+                  item-value="id"
+                  label="باشگاه"
+                  v-on:input="clubDDListChanged(`${clubSelect}`)">
+
+
+
+        </v-select>
+    </v-col>
+    <v-col cols="3">
+        <v-select v-model="salonSelect"
+                  :items="salonNames"
+                  item-text="detailName"
+                  item-value="id"
+                  label="سالن"
+                  v-on:input="SalonDDLChanged(`${salonSelect}`)">
+
+        </v-select>
+    </v-col>
+    <v-col cols="3">
+        <v-select v-model="BuffetSelect"
+                  :items="BuffetNames"
+                  item-text="detailName"
+                  item-value="buffetId"
+                  label="بوفه"
+                  v-on:input="BuffetDDLChanged(`${BuffetSelect}`)">
+
+        </v-select>
+    </v-col>
+    <v-col cols="3">
+        <v-select v-model="itemTypeSelect"
+                  :items="itemTypeNames"
+                  item-text="detailName"
+                  item-value="id"
+                  label="دسته بندی جنس"
+                  v-on:input="itemTypeDDLChanged()">
+            >
+
+        </v-select>
+    </v-col>
+
+
+</v-row>
+
+@*جدول لیست کالا*@
+<v-data-table :headers="BuffetItemHeader"
+              :items="BuffetItemTbl"
+              :items-per-page="5"
+              class="elevation-1">
+    <template v-slot:body="{items}">
+        <tbody>
+            <tr v-for="item in items" :key="item.id" style="text-align:right" onclick="highliteTR(this)">
+                <td>{{ item.itemName }}</td>
+                <td>{{item.price}}</td>
+                <td>{{item.quantity}}</td>
+                <td>
+                    @*<v-btn @@click="BuffetDetailId=item.id;ShowChargeItemOfBuffet=true;">شارژ </v-btn>*@
+                    @*<v-btn @@click="BuffetDetailId=item.id;ShowPurchaseDialog=true; SelectedItemName=item.itemName; GetUsers();"> خرید </v-btn>*@
+                    <product-counter :value="getQuantityOfItem(item.id)" :itemid="item.id"></product-counter>
+                </td>
+
+                @*<td>
+                        <v-btn class="mx-2" fab dark small color="pink" @@click="onButtonClick(item.id)">
+                            <v-icon dark>mdi-heart</v-icon>
+                        </v-btn>
+                    </td>*@
+            </tr>
+        </tbody>
+    </template>
+
+</v-data-table>
+<v-btn  @@click="ShowPurchaseDialog=true;GetUsers();getNumberOfSelectedItems()" >خرید</v-btn>
+
+@*دیالوگ خرید*@
+<v-dialog v-model="ShowPurchaseDialog"
+          max-width="600px" content-class="my-custom-dialog">
+
+    <v-card>
+        <v-card-title>
+            <span class="text-h5">خرید آیتم بوفه ({{numberOfSelectedItems}} نوع)  </span>
+        </v-card-title>
+        <v-card-text>
+            <v-container>
+                <v-row>
+
+                    <v-col cols="8">
+                        <v-text-field label="تعداد*"
+                                      required
+                                      hint="تعداد آیتم را وارد کنید"
+                                      v-model="purchaseQuantity"></v-text-field>
+                    </v-col>
+
+                    <v-col cols="8">
+                        <template>
+
+                            <v-data-table :headers="userTblHeader"
+                                          :items="userTblSource"
+                                          :items-per-page="5"
+                                          item-key="table_header_index"
+                                          class="elevation-1">
+                                <template v-slot:body="{items}">
+                                    <tbody>
+                                        <tr v-for="item in items" :key="item.id" style="text-align:right" onclick="highliteTR(this)" @@click="selectedUserId=item.id; ">
+                                            <td>{{ item.userName }}</td>
+                                            @*<td>{{ item.role }}</td>
+                                                <td>{{ item.email }}</td>
+                                                <td>{{ item.phone }}</td>
+                                                <td><v-btn @@click="RegisterUserForSession(item.id)">ثبت نام</v-btn> </td>*@
+
+
+
+
+
+
+
+
+                                        </tr>
+                                    </tbody>
+                                </template>
+
+                            </v-data-table>
+
+                        </template>
+                    </v-col>
+
+
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1"
+                   text
+                   @@click="ShowPurchaseDialog = false">
+                انصراف
+            </v-btn>
+            <v-btn color="green darken-1"
+                   text
+                   @@click="purchaseItem()">
+                ثبت
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+
+
+<v-snackbar v-model="snackbar"
+            :timeout="snackBarTimeout"
+            color="blue-grey">
+    {{ snackbarMessage }}
+</v-snackbar>
+
+@section VueComponents{
+    <script>
+
+
+        var itemQuantity = [];
+
+
+
+        Vue.component('product-counter', {
+            props: ['value', 'itemid'],
+            computed: {
+                count: {
+                    get() { return this.value },
+                    set(newValue) {
+                        this.$emit('input', newValue);
+                        this.value = newValue;
+                        //this.$emit('update:value', newValue)
+                        let aa = this.itemid;
+                        var res = itemQuantity.filter(pp => pp.itemId == this.itemid);
+                        if (res.length == 1) {
+                            res[0].quantity = this.value;
+                        }
+                        else {
+                            itemQuantity.push({ itemId: this.itemid, quantity: this.value });
+                        }
+                    }
+                }
+            },
+            template: `<div class="row">
+
+                            <button v-on:click="count++; " class="btn btn-success" > <i class="v-icon notranslate mdi mdi-plus-circle theme--dark"></i></button>
+
+                            <input v-model="count" class="form-control" style="width: 50px;"  >
+
+                            <button v-on:click="count--;" v-bind:disabled="count<1" class="btn btn-danger"><i class="v-icon notranslate mdi mdi-minus-circle theme--dark"></i></button>
+
+                      </div>
+                    `
+        })
+
+        myMixin = {
+
+            data: {
+                snackbar: false,
+                snackbarMessage: "",
+
+                snackbarColor: "",
+                snackBarTimeout: 3000,
+
+
+                clubs: [],
+                clubSelect: {},
+
+                salonNames: [],
+                salonSelect: [],
+                itemTypeSelect: -1,
+                itemTypeNames: [],
+                BuffetItemHeader: [
+                    { text: "نام آیتم", value: "itemName" },
+                    { text: "قیمت", value: "price" },
+                    { text: "تعداد", value: "quantity" }
+                ],
+                BuffetItemTbl: [],
+                ShowPurchaseDialog: false,
+                quan: 1,
+
+                BuffetSelect: {},
+                BuffetNames: [],
+
+                BuffetDetailId: 0,
+                SelectedItemName: "",
+                selectedUserId: 0,
+                purchaseQuantity: 0,
+                userTblHeader: [
+                    { text: 'نام کاربری', value: 'userName' },
+
+                    { text: 'نقش', value: 'role' },
+
+                    { text: 'ایمیل', value: 'email' },
+                    { text: 'تلفن', value: 'phone' },
+
+                ],
+                userTblSource: [],
+                numberOfSelectedItems: 0,
+            },
+            methods: {
+
+                showSnack: function (snackbarMessage) {
+                    this.snackbar = true;
+                    this.snackbarMessage = snackbarMessage;
+                },
+                getClubs: async function () {
+
+                    let model = {
+                        Model: null,
+                        Address: "/api/Definitions/GetClubList"
+                    };
+                    let vv = await CallApi(model);
+                    this.clubs = vv.data;
+
+                },
+                clubDDListChanged: async function (a) {
+
+                    //alert(a);
+                    //let ss = a;
+                    await this.getSalonListByClubId(a);
+                },
+
+                getSalonListByClubId: async function (clubIdParam) {
+
+                    let model = {
+                        Model: {
+                            clubId: clubIdParam
+                        },
+                        Address: "/api/Club/GetSalonListByClubId"
+                    };
+                    let vv = await CallApi(model);
+
+                    this.salonNames = vv.data;
+                    if (this.salonNames) {
+                        //this.salonSelect = this.salonNames[0];
+                    }
+
+                    model = {
+                        Model: {
+                            cabinetId: this.cabinetId
+                        },
+                        Address: "/api/Cabinet/GetListOfSalonAssignedToCabinet"
+
+                    }
+                    vv = await CallApi(model);
+                    this.salonSelect = vv.data.map(pp => pp.salonId);
+
+
+                    //return vv.data;
+                },
+
+                GetItemTypes: async function () {
+                    let model = {
+                        Model: null,
+                        Address: "/api/Definitions/GetBuffetItemTypeList"
+                    };
+                    let vv = await CallApi(model);
+                    this.itemTypeNames = vv.data;
+                },
+
+                itemTypeDDLChanged: function () {
+                    this.GetListOfItemsByTypeBySalon();
+                },
+                SalonDDLChanged: async function (val) {
+
+                    //alert(val);
+                    await this.GetListOfSalonBuffet(val);
+                },
+                GetListOfSalonBuffet: async function (val) {
+                    //alert(this.salonSelect);
+                    let model = {
+                        Model: {
+                            salonId: val
+                        },
+                        Address: "/api/Buffet/GetlistOfSalonBuffets"
+                    };
+                    let vv = await CallApi(model);
+
+                    this.BuffetNames = vv.data;
+                },
+
+                BuffetDDLChanged: async function (value) {
+                    //alert(this.BuffetSelect);
+                    await this.GetListOfItemsByTypeBySalon();
+                },
+                GetListOfItemsByTypeBySalon: async function () {
+
+                    let model = {
+                        Model: {
+                            itemId: null,
+                            itemTypeId: this.itemTypeSelect,
+                            buffetId: this.BuffetSelect
+                        },
+                        Address: "/api/Buffet/GetListOfItemsByTypeBySalon"
+                    };
+
+                    let vv = await CallApi(model);
+
+                    this.BuffetItemTbl = vv.data;
+
+                },
+
+                purchaseItem: async function () {
+                    //alert(this.BuffetDetailId);
+                    let model = {
+                        Model: {
+                            id: this.BuffetDetailId,
+                            quantity: this.purchaseQuantity,
+                            userId: this.selectedUserId
+                        },
+                        Address: "/api/Buffet/PurchaseItem"
+
+                    };
+                    let vv = await CallApi(model);
+                    this.ShowPurchaseDialog = false;
+                    await this.GetListOfItemsByTypeBySalon();
+
+                },
+
+                GetUsers: async function () {
+
+                    // //alert(this.selectedSessionId);
+
+
+                    var model = {
+                        Model: null,
+                        Address: "/api/Authenticate/listOfUsers"
+
+                    };
+
+                    let vv = await CallApi(model);
+
+                    this.userTblSource = vv.data;
+                },
+
+                getQuantityOfItem: function (val) {
+
+                    var res = itemQuantity.filter(pp => pp.itemId == val);
+                    if (res.length == 1) {
+
+                        return res[0].quantity;
+                    }
+                    else {
+                        return 0;
+                    }
+
+                },
+                getNumberOfSelectedItems: function () {
+
+                    this.numberOfSelectedItems = itemQuantity.filter(pp => pp.quantity != 0).length;
+
+
+                }
+            },
+            methods: function () {
+
+                this.getClubs();
+                this.GetItemTypes();
+            }
+
+
+        }
+
+
+
+        //mainVueApp.$data.getClubs();
+        //mainVueApp.$data.GetBuffetType();
+        //mainVueApp.$data.
+
+        function highliteTR(tr) {
+
+            let theRows = tr.parentNode.rows;
+
+
+            for (let i = 0; i < theRows.length; i++) {
+                let ss = theRows[i];
+                ss.classList.remove("bg-info");
+
+            }
+            tr.classList.add("bg-info");
+
+        }
+    </script>
+
+}

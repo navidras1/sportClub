@@ -15,7 +15,7 @@ namespace SportClubFaratechno.Models.Repository
         IQueryable<T> Find(Expression<Func<T, bool>> expression);
         bool Exists(Expression<Func<T, bool>> expression);
         T Add(T entity);
-        void AddRange(IEnumerable<T> entities);
+        List<T> AddRange(IEnumerable<T> entities);
         public void Update(T entity);
         void Remove(T entity);
         public void RemoveById(object id);

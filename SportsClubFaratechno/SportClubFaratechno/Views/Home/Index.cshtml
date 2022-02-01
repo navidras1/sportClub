@@ -2,10 +2,400 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <p> this is change</p>
+@*<div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+        <p> this is change</p>
+    </div>*@
+
+
+
+
+<div style="text-align:right; direction:rtl" id="theDialog">
+
+
+
+    <v-btn @@click="dialog=true; showSalonDialog=false">باشگاه جدید</v-btn>
+    <template>
+        <v-data-table :headers="headers"
+                      :items="tblSource"
+                      :items-per-page="5"
+                      class="elevation-1">
+
+        </v-data-table>
+    </template>
+
+
+    <v-row justify="center">
+        <v-dialog v-model="dialog"
+                  @@keydown.esc="dialog = false"
+                  max-width="600px" content-class="my-custom-dialog">
+            <v-form ref="form"
+                    @*v-model="valid"*@
+                    lazy-validation>
+                <v-card>
+                    <v-card-title>
+                        <span class="text-h5">{{dialogCaption}}</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
+
+                                <v-col cols="12">
+                                    <v-text-field label="نام باشگاه*"
+                                                  required
+                                                  :rules="nameRules"
+                                                  :hint="dialogHint"
+                                                  v-model="clubName"
+                                                  @@keydown.enter="focusNext"
+                                                  autofocus>
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field label="توضیحات"
+                                                  v-model="ClubDescription"
+                                                  required
+                                                  @@keydown.enter="createClub()"
+                                                  ></v-text-field>
+                                </v-col>
+
+
+                            </v-row>
+                        </v-container>
+
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="red darken-1"
+                               text
+                               @@click="dialog = false;resetForm();">
+                            انصراف
+                        </v-btn>
+                        <v-btn color="green darken-1"
+                               text
+                               @@click="createClub()">
+                            ثبت
+                        </v-btn>
+                    </v-card-actions>
+
+                </v-card>
+            </v-form>
+        </v-dialog>
+
+
+        <v-dialog v-model="dialogSalon"
+                  persistent
+                  max-width="600px" 
+                  
+                  content-class="my-custom-dialog">
+            <form>
+                <v-card>
+                    <v-card-title>
+                        <span class="text-h5">ثبت سالن</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
+
+                                <v-col cols="12">
+                                    <v-text-field label="نام سالن*"
+                                                  required
+                                                  hint="نام سالن را وارد کنید"
+                                                  v-model="salonName"
+                                                  @@keydown.enter="focusNext"
+                                                  :rules="nameRules"
+                                                  autofocus
+                                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field label="توضیحات"
+                                                  requiredhint="نام سالن را وارد کنید"
+                                                  v-model="salonDescription"
+                                                  @@keydown.enter="createSalon"
+                                                  ></v-text-field>
+                                </v-col>
+
+
+                            </v-row>
+                        </v-container>
+
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="red darken-1"
+                               text
+                               @@click="dialog = false">
+                            انصراف
+                        </v-btn>
+                        <v-btn color="green darken-1"
+                               text
+                               @@click="createSalon()">
+                            ثبت
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </form>
+        </v-dialog>
+
+
+
+
+    </v-row>
+    <v-snackbar v-model="snackbar"
+                :timeout="timeout"
+                color="blue-grey">
+        {{ snackbarMessage }}
+
+        @*<template v-slot:action="{ attrs }">
+                <v-btn color="red"
+                       text
+                       v-bind="attrs"
+                       @@click="snackbar = false">
+                    Close
+                </v-btn>
+            </template>*@
+    </v-snackbar>
+
+
+
+
 </div>
+
+@section VueComponents{
+    <script src="~/js/Components/snackBar.js"></script>
+    <script>
+        var myMixin = {
+            data: {
+                dialog: false
+            }
+        };
+    </script>
+    @*}
+
+        @section Scripts{*@
+
+
+
+
+    <script>
+
+
+
+
+
+        //axios.post("/General/Login", LoginModel).then(response => vv = response).catch(err => console.log(err));
+
+        var clubId = 0;
+        var salonId = 0;
+
+
+        //var myMixin = {
+        //    data: {
+        //        dialog: false,
+
+        //    },
+        //    watch: {
+        //        dialog: function (newValue, old) {
+        //            if (!newValue) {
+        //                alert("closed")
+        //            }
+        //        }
+        //    }
+        //}
+
+
+        // mixins: [myMixin],
+
+
+        var myMixin = {
+
+
+            watch: {
+                dialog: function (newValue, old) {
+                    if (!newValue) {
+                        this.resetForm();
+                    }
+                }
+            },
+            data: {
+                headers: [
+
+
+                    { text: 'نام سالن', value: 'detailName' },
+
+                    { text: 'توضیحات', value: 'description' },
+
+                    { text: 'تاریخ ثبت', value: 'submissionDateShamsi' }
+
+                ],
+
+                tblSource: [],
+                showSalonDialog: true,
+
+
+                dialog: false,
+                dialogCaption: "",
+                dialogHint: "",
+                clubName: "",
+                snackbar: false,
+                snackbarMessage: "",
+
+                snackbarColor: "",
+                timeout: 3000,
+
+
+                dialogSalon: false,
+                salonName: "",
+
+                testShow: true,
+                ClubDescription: "",
+                salonDescription:""
+
+
+            },
+            methods: {
+                createClub: async function () {
+                    let model = {
+                        Model: {
+                            detailName: this.clubName,
+                            description: this.ClubDescription
+                        },
+                        Address: "/api/Definitions/CreateClub"
+
+                    };
+
+                    let vv = {};
+
+                    await axios.post("/General/CallApi", model).then(response => vv = response.data).catch(err => console.log(err));
+
+                    if (vv.hasError == true) {
+
+
+
+                        this.snackbarMessage = vv.message;
+                        this.snackbarColor = "yellow";
+                        this.snackbar = true;
+                    }
+                    else {
+
+
+                        if (this.showSalonDialog == false) {
+                            this.dialog = false;
+                            this.getClubList();
+                            return;
+                        }
+
+
+
+                        
+                        clubId = vv.data.id;
+                        
+                        let clubModel = {
+                            Model: {
+                                ClubId: clubId,
+                                Address: "",
+                                Description: ""
+                            },
+                            Address: "/api/Club/RegisterClub"
+                        };
+                        await axios.post("/General/CallApi", clubModel).then(response => vv = response.data).catch(err => console.log(err));
+
+                        this.dialog = false;
+                        this.getClubList();
+                        this.dialogSalon = true;
+                    }
+
+
+
+
+                },
+                createSalon: async function () {
+                    let model = {
+                        Model: {
+                            detailName: this.salonName,
+                            description: this.salonDescription
+                        },
+                        Address: "/api/Definitions/CreateDetailSalon"
+
+                    };
+
+                    let vv = {};
+
+                    await axios.post("/General/CallApi", model).then(response => vv = response.data).catch(err => console.log(err));
+
+                    if (vv.hasError == true) {
+
+                        this.snackbarMessage = vv.message;
+                        this.snackbarColor = "yellow";
+                        this.snackbar = true;
+                    }
+                    else {
+
+                        salonId = vv.data.id;
+
+                        model = {
+                            Model: {
+                                ClubId: clubId,
+                                SalonId: salonId
+                            },
+                            Address: "/api/Club/AssignClubToSalon"
+
+                        };
+
+
+                        await axios.post("/General/CallApi", model).then(response => vv = response.data).catch(err => console.log(err));
+                        this.dialogSalon = false;
+
+
+                    }
+
+                },
+
+                getClubList: async function () {
+                    let vv;
+
+                    let model = { Model: null, Address: "/api/Definitions/GetClubList" };
+
+                    vv = await CallApi(model);
+                    this.tblSource = vv.data;
+
+                },
+                test: function () {
+                    alert(window.location.href);
+                }
+            }
+
+            ,
+            created: function () {
+               this. getClubList();
+            }
+
+        };
+
+        async function RegisterClub() {
+            let vv;
+
+            let model = { Model: null, Address: "/api/Definitions/GetClubList" }
+
+            await axios.post("/General/CallApi", model).then(response => vv = response.data).catch(err => console.log(err));
+            //alert(JSON.stringify(vv.data));
+            if (vv.data.length == 0) {
+                mainVueApp.$data.dialogCaption = "ثبت باشگاه";
+                mainVueApp.$data.dialogHint = "لطفا نام باشگاه را وارد کنید";
+                mainVueApp.$data.dialog = true;
+            }
+        }
+        RegisterClub();
+
+        
+
+
+    </script>
+
+}
+
+
+
+
 
 

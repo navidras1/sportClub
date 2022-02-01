@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿#define sqlite
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 using SportClubFaratechno.Models;
 using SportClubFaratechno.Models.SportClubFaratechnoDB;
 using System;
@@ -17,6 +20,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace SportClubFaratechno
 {
@@ -40,11 +44,15 @@ namespace SportClubFaratechno
                        .AllowAnyHeader();
             }));
 
-            services.AddDbContext<SportClubFaratechnoDBContext>(options => {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddDbContext<SportClubFaratechnoDBContext>(
+                options => {
+#if sqlite
+                options.UseSqlite(Configuration.GetConnectionString("cs"));
+#else
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+#endif
 
-
-            }, contextLifetime: ServiceLifetime.Transient,
+        }, contextLifetime: ServiceLifetime.Transient,
     optionsLifetime: ServiceLifetime.Singleton);
 
             services.AddTransient(typeof(Models.Repository.IGenericRepository<>), typeof(Models.Repository.SportClubRepository<>));
@@ -106,6 +114,7 @@ namespace SportClubFaratechno
                         }
                     },
                     Array.Empty<string>()
+
                 }
             });
             });
@@ -114,7 +123,10 @@ namespace SportClubFaratechno
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromHours(3);//You can set Time   
             });
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest)
+    .AddNewtonsoftJson(opt => {
+        opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    });
 
         }
 
@@ -131,7 +143,7 @@ namespace SportClubFaratechno
             }
 
             app.UseCors("MyPolicy");
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             TheServiceProvider.Instance = app.ApplicationServices;

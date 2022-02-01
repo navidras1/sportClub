@@ -1,0 +1,554 @@
+﻿
+@{
+    ViewData["Title"] = "Cabinet";
+    Layout = "~/Views/Shared/_VueLayout.cshtml";
+}
+
+<h1>کمد</h1>
+
+<h2>نوع کمد</h2>
+<v-btn @@click="showDialogCreateCabinetType=true">ایجاد نوع کمد</v-btn>
+<v-data-table :headers="CabinetTypeTblHeader"
+              :items="CabinetTypeTbl"
+              :items-per-page="5"
+              class="elevation-1">
+    <template v-slot:body="{items}">
+        <tbody>
+            <tr v-for="item in items" :key="item.id" style="text-align:right" @@click="cabinetTypeId=item.id; GetCabinetByCabinetTypeId();" onclick="highliteTR(this)">
+                <td>{{ item.detailName }}</td>
+                <td>{{ item.description }}</td>
+
+                @*<td>
+                        <v-btn class="mx-2" fab dark small color="pink" @@click="onButtonClick(item.id)">
+                            <v-icon dark>mdi-heart</v-icon>
+                        </v-btn>
+                    </td>*@
+            </tr>
+        </tbody>
+    </template>
+
+</v-data-table>
+
+
+<h2>کمد</h2>
+<v-btn @@click="ShowCreateCabinetDialog=true;">ایجاد کمد</v-btn>
+<v-data-table :headers="CabinetTblHeader"
+              :items="CabinetTbl"
+              :items-per-page="5"
+              class="elevation-1">
+    <template v-slot:body="{items}">
+        <tbody>
+            <tr v-for="item in items" :key="item.id" style="text-align:right" @@click="" onclick="highliteTR(this)">
+
+                <td>{{ item.cabinetName }}</td>
+                <td>{{ item.detailName }}</td>
+                <td>{{ item.description }}</td>
+                <td><v-btn @@click="showCabinetToSalonDialog=true; cabinetId= item.id; GetClubList();"> انتساب به سالن</v-btn></td>
+
+                @*<td>
+                        <v-btn class="mx-2" fab dark small color="pink" @@click="onButtonClick(item.id)">
+                            <v-icon dark>mdi-heart</v-icon>
+                        </v-btn>
+                    </td>*@
+            </tr>
+        </tbody>
+    </template>
+
+</v-data-table>
+
+
+
+<v-dialog v-model="showDialogCreateCabinetType"
+          persistent
+          max-width="600px" content-class="my-custom-dialog">
+    @*<template v-slot:activator="{ on, attrs }">
+            <v-btn color="primary"
+                   dark
+                   v-bind="attrs"
+                   v-on="on">
+                Open Dialog
+            </v-btn>
+        </template>*@
+    <v-card>
+        <v-card-title>
+            <span class="text-h5">نوع کمد جدید</span>
+        </v-card-title>
+        <v-card-text>
+            <v-container>
+                <v-row>
+
+                    <v-col cols="12">
+                        <v-text-field label="توع کمد*"
+                                      required
+                                      hint="نام نوع کمد را وارد کنید"
+                                      v-model="cabinetTypeName"></v-text-field>
+                    </v-col>
+
+                    <v-col cols="12">
+                        <v-text-field label="توضیحات"
+                                      required
+                                      hint="توضیحات مربوط به نوع کمد را وارد کنید"
+                                      v-model="cabinetTypeDescription"></v-text-field>
+                    </v-col>
+
+
+
+                    @*<v-col cols="12">
+                            <v-text-field label="Password*"
+                                          type="password"
+                                          required></v-text-field>
+                        </v-col>*@
+                    @*<v-col cols="12"
+                               sm="6">
+                            <v-select :items="['0-17', '18-29', '30-54', '54+']"
+                                      label="Age*"
+                                      required></v-select>
+                        </v-col>
+                        <v-col cols="12"
+                               sm="6">
+                            <v-autocomplete :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
+                                            label="Interests"
+                                            multiple></v-autocomplete>
+                        </v-col>*@
+                </v-row>
+            </v-container>
+            @*<small>*indicates required field</small>*@
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1"
+                   text
+                   @@click="showDialogCreateCabinetType = false">
+                انصراف
+            </v-btn>
+            <v-btn color="green darken-1"
+                   text
+                   @@click="createCabinetType()">
+                ثبت
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+
+
+<v-dialog v-model="showCabinetToSalonDialog"
+          @*persistent*@
+          max-width="600px" content-class="my-custom-dialog">
+    @*<template v-slot:activator="{ on, attrs }">
+            <v-btn color="primary"
+                   dark
+                   v-bind="attrs"
+                   v-on="on">
+                Open Dialog
+            </v-btn>
+        </template>*@
+    <v-card>
+        <v-card-title>
+            <span class="text-h5">انتساب کمد به سالن</span>
+        </v-card-title>
+        <v-card-text>
+            <v-container>
+                <v-row>
+
+                    <v-col cols="12">
+                        <v-select v-model="clubSelect"
+                                  :items="clubNames"
+                                  item-text="detailName"
+                                  item-value="id"
+                                  label="باشگاه"
+                                  v-on:input="clubDDListChanged(`${clubSelect}`)">
+
+                        </v-select>
+                    </v-col>
+
+                    <v-col cols="12">
+                        <v-select v-model="salonSelect"
+                                  :items="salonNames"
+                                  item-text="detailName"
+                                  item-value="id"
+                                  label="سالن"
+                                  attach
+                                  chips
+                                  multiple
+                                  dense
+                                  v-on:input="ss(`${clubSelect}`)">
+
+                        </v-select>
+                    </v-col>
+
+                    <v-col cols="12">
+                        <v-text-field label="توضیحات"
+                                      required
+                                      hint="توضیحات مربوط به نوع کمد را وارد کنید"
+                                      v-model="cabinetTypeDescription"></v-text-field>
+                    </v-col>
+
+
+
+                    @*<v-col cols="12">
+                            <v-text-field label="Password*"
+                                          type="password"
+                                          required></v-text-field>
+                        </v-col>*@
+                    @*<v-col cols="12"
+                               sm="6">
+                            <v-select :items="['0-17', '18-29', '30-54', '54+']"
+                                      label="Age*"
+                                      required></v-select>
+                        </v-col>
+                        <v-col cols="12"
+                               sm="6">
+                            <v-autocomplete :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
+                                            label="Interests"
+                                            multiple></v-autocomplete>
+                        </v-col>*@
+                </v-row>
+            </v-container>
+            @*<small>*indicates required field</small>*@
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1"
+                   text
+                   @@click="showCabinetToSalonDialog=false">
+                انصراف
+            </v-btn>
+            <v-btn color="green darken-1"
+                   text
+                   @@click="assignCabinetToSalon()">
+                ثبت
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+
+<v-dialog v-model="ShowCreateCabinetDialog"
+          @*persistent*@
+          max-width="600px" content-class="my-custom-dialog">
+
+    <v-card>
+        <v-card-title>
+            <span class="text-h5">ایجاد کمد</span>
+        </v-card-title>
+        <v-card-text>
+            <v-container>
+                <v-row>
+
+                    <v-col cols="12">
+                        <v-text-field label="نام کمد"
+                                      required
+                                      hint="نام کمد را وارد کنید"
+                                      v-model="cabinetName"></v-text-field>
+                    </v-col>
+
+                </v-row>
+            </v-container>
+
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1"
+                   text
+                   @@click="ShowCreateCabinetDialog=false">
+                انصراف
+            </v-btn>
+            <v-btn color="green darken-1"
+                   text
+                   @@click="CreateCabinet()">
+                ثبت
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+
+
+<v-snackbar v-model="snackbar"
+            :timeout="snackBarTimeout"
+            color="blue-grey">
+    {{ snackbarMessage }}
+</v-snackbar>
+@section VueComponents{
+
+    <script>
+        myMixin = {
+
+            data: {
+                snackbar: false,
+                snackbarMessage: "",
+
+                snackbarColor: "",
+                snackBarTimeout: 3000,
+                CabinetTypeTblHeader: [
+                    { text: "نوع کمد", value: "detailName" },
+                    { text: "توضیحات", value: "description" },
+
+                ],
+                CabinetTypeTbl: [],
+                showDialogCreateCabinetType: false,
+                cabinetTypeId: 0,
+                cabinetTypeName: "",
+                cabinetTypeDescription: "",
+                CabinetTblHeader: [
+                    { text: "نام کمد", value: "cabinetName" },
+                    { text: "نوع کمد", value: "detailName" },
+                    { text: "توضیحات", value: "description" },
+
+
+                ],
+                CabinetTbl: [],
+                cabinetName: "",
+                showCabinetToSalonDialog: false,
+                cabinetId: 0,
+                //assignCabinetToSalon: function () { },
+                clubNames: [],
+                clubSelect: {},
+                salonNames: [],
+                salonSelect: [],
+                ShowCreateCabinetDialog: false,
+            },
+            methods: {
+
+                showSnack: function (snackbarMessage) {
+                    this.snackbar = true;
+                    this.snackbarMessage = snackbarMessage;
+                },
+
+
+
+                GetCabinetTypeList: async function () {
+                    let model = {
+                        Model: null,
+                        Address: "/api/Definitions/GetCabinetTypeList"
+                    };
+                    let vv = await CallApi(model);
+                    this.CabinetTypeTbl = vv.data;
+                },
+
+                createCabinetType: async function () {
+
+
+                    let model = {
+                        Model: {
+                            detailName: this.cabinetTypeName,
+                            description: this.cabinetTypeDescription
+                        },
+                        Address: "/api/Definitions/CreateDetailCabinetType"
+                    };
+
+                    let vv = await CallApi(model);
+                    if (vv.hasError == true) {
+                        this.showSnack(vv.message);
+                    }
+                    else {
+                        this.showSnack("نوع کمد با موفقیت ایجاد شد.");
+                        await this.GetCabinetTypeList();
+                    }
+
+                },
+
+
+
+                GetCabinetList: async function () {
+                    let model = {
+                        Model: null,
+                        Address: "/api/Cabinet/GetListOfCabinets"
+                    };
+                    let vv = await CallApi(model);
+                },
+
+
+
+                GetCabinetByCabinetTypeId: async function () {
+
+                    let model = {
+                        Model: {
+                            cabinetTypeId: this.cabinetTypeId
+                        },
+                        Address: "/api/Cabinet/GetListOfCabinetsByCabintetType"
+                    };
+                    let vv = await CallApi(model);
+
+                    this.CabinetTbl = vv.data;
+                },
+
+
+                createCabinet: async function () {
+                    let model = {
+                        Model: {
+                            cabinetNames: [
+                                this.cabinetName
+                            ],
+                            cabinetType: this.cabinetTypeId
+                        },
+                        Address: "/api/Cabinet/CreateCabinet"
+
+                    };
+                    let vv = await CallApi(model);
+
+                    if (vv.hasError == true) {
+                        this.showSnack(vv.message);
+                    }
+                    else {
+
+                        this.showSnack("کمد با موفقیت ایجاد شد.");
+                    }
+
+                },
+
+                GetClubList: async function () {
+
+
+                    let model = { Model: null, Address: "/api/Definitions/GetClubList" };
+
+
+                    let vv = await CallApi(model);
+                    this.clubNames = vv.data;
+                    this.clubSelect = vv.data[0];
+
+                    let clubId = this.clubSelect.id;
+
+                    await this.getSalonListByClubId(clubId);
+
+
+                },
+                clubDDListChanged: async function (a) {
+
+                    //let ss = a;
+                    await this.getSalonListByClubId(a);
+                },
+
+
+
+                getSalonListByClubId: async function (clubIdParam) {
+
+                    let model = {
+                        Model: {
+                            clubId: clubIdParam
+                        },
+                        Address: "/api/Club/GetSalonListByClubId"
+                    };
+                    let vv = await CallApi(model);
+
+                    this.salonNames = vv.data;
+                    if (this.salonNames) {
+                        //this.salonSelect = this.salonNames[0];
+                    }
+
+                    model = {
+                        Model: {
+                            cabinetId: this.cabinetId
+                        },
+                        Address: "/api/Cabinet/GetListOfSalonAssignedToCabinet"
+
+                    }
+                    vv = await CallApi(model);
+                    this.salonSelect = vv.data.map(pp => pp.salonId);
+
+
+                    //return vv.data;
+                },
+                assignCabinetToSalon: async function () {
+
+                    let theCabinetId = this.cabinetId;
+
+                    let model = {
+                        Model: {
+                            cabinetId: theCabinetId
+                        },
+                        Address: "/api/Cabinet/GetListOfSalonAssignedToCabinet"
+                    };
+
+                    let vv = CallApi(model);
+
+                    //alert(`${JSON.stringify(this.salonSelect)} ${this.cabinetId}`);
+
+                    let selectedSalonId = 0;
+
+
+                    if (this.salonSelect.id) {
+                        selectedSalonId = this.salonSelect.id;
+                    }
+                    else {
+                        selectedSalonId = this.salonSelect;
+                    }
+
+                    let theModel = {
+                        salonIds: this.salonSelect,
+                        cabinetId: theCabinetId
+                    };
+
+
+
+                    //this.salonSelect.forEach(function (item, index) {
+                    //    theModel.push({
+                    //        salonId: item,
+                    //        cabinetId: theCabinetId});
+                    //});
+
+                    model = {
+                        Model: theModel
+                        , Address: "/api/Cabinet/AssignCabinetToSalon"
+                    };
+
+                    vv = await CallApi(model);
+                    if (vv.hasError) {
+                        this.showSnack(vv.message);
+                    }
+                    else {
+                        this.showSnack("عملیات با موفقیت انجام شد.");
+                        this.showCabinetToSalonDialog = false;
+                    }
+                },
+
+
+
+
+                CreateCabinet: async function () {
+                    let model = {
+                        Model: {
+                            cabinetNames: [
+                                this.cabinetName
+                            ],
+                            cabinetType: this.cabinetTypeId
+                        },
+                        Address: "/api/Cabinet/CreateCabinet"
+                    };
+
+                    let vv = await CallApi(model);
+
+                    if (vv.hasError) {
+                        this.showSnack("خطا در عملیات!!");
+                    } else {
+                        this.showSnack("عملیات با موفقیت انجام شد.");
+                        await this.GetCabinetByCabinetTypeId();
+                    }
+
+
+                }
+            },
+            created: function () {
+                this.GetCabinetTypeList();
+                this.GetCabinetList();
+            }
+
+        };
+        
+        function highliteTR(tr) {
+
+            let theRows = tr.parentNode.rows;
+
+
+            for (let i = 0; i < theRows.length; i++) {
+                let ss = theRows[i];
+                ss.classList.remove("bg-info");
+
+            }
+            tr.classList.add("bg-info");
+
+
+
+
+        }
+    </script>
+
+}

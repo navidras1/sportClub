@@ -1,0 +1,191 @@
+﻿
+@{
+    ViewData["Title"] = "Sports";
+    Layout = "~/Views/Shared/_VueLayout.cshtml";
+}
+
+<h1>رشته ورزشی</h1>
+
+<template>
+    <v-btn @@click="dialogSport=true">رشته جدید</v-btn>
+    <template>
+        <v-data-table :headers="headers"
+                      :items="tblSource"
+                      :items-per-page="5"
+                      class="elevation-1">
+
+        </v-data-table>
+
+        <v-dialog v-model="dialogSport"
+                  @@keydown.esc="dialogSport = false"
+
+                  max-width="600px" content-class="my-custom-dialog">
+            <v-form
+            ref="form"
+            @*v-model="valid"*@
+            lazy-validation
+                    >
+                <v-card>
+                    <v-card-title>
+                        <span class="text-h5">ثبت رشته ورزشی</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
+
+
+
+                                <v-col cols="12">
+                                    <v-text-field label="نام رشته*"
+                                                  required
+                                                  :rules="nameRules"
+                                                  hint="نام رشته ورزشی را وارد کنید"
+                                                  v-model="sportName"
+                                                  @@keydown.enter="focusNext"
+                                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field label="توضیحات"
+                                                  required
+                                                  hint="نام رشته ورزشی را وارد کنید"
+                                                  v-model="description"
+                                                  @@keydown.enter="createSport"
+                                                  ></v-text-field>
+                                </v-col>
+
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="red darken-1"
+                               text
+                               @@click="dialogSport = false;sportName=''">
+                            انصراف
+                        </v-btn>
+                        <v-btn color="green darken-1"
+                               text
+                               @@click="createSport()">
+                            ثبت
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
+        </v-dialog>
+
+        <v-snackbar v-model="snackbar"
+                    :timeout="snackBarTimeout"
+                    color="blue-grey">
+            {{ snackbarMessage }}
+
+            @*<template v-slot:action="{ attrs }">
+                    <v-btn color="red"
+                           text
+                           v-bind="attrs"
+                           @@click="snackbar = false">
+                        Close
+                    </v-btn>
+                </template>*@
+        </v-snackbar>
+    </template>
+</template>
+
+@section VueComponents{
+    <script>
+        var myMixin = {
+            watch: {
+                dialogSport: function (newValue, old) {
+                    if (!newValue) {
+                        this.resetForm();
+                    }
+                }
+            },
+
+            data: {
+                snackbar: false,
+                snackbarMessage: "",
+
+                snackbarColor: "",
+                snackBarTimeout: 3000,
+
+
+
+                headers: [
+
+
+                    { text: 'نام رشته', value: 'detailName' },
+
+                    { text: 'توضیحات', value: 'description' },
+
+                    { text: 'SubmissionDateShamsi', value: 'submissionDateShamsi' }
+
+                ],
+
+                tblSource: [],
+                dialogSport: false,
+
+                sportName: "",
+                description: "",
+
+            },
+            methods: {
+                showSnack: function (snackbarMessage) {
+                    this.snackbar = true;
+                    this.snackbarMessage = snackbarMessage;
+                },
+                GetSportList: async function () {
+
+
+                    let model = { Model: null, Address: "/api/Definitions/GetSportsList" };
+
+                    let vv = await CallApi(model);
+                    this.tblSource = vv.data;
+
+                },
+                createSport: async function () {
+
+
+                    if (this.sportName == undefined || this.sportName.trim() == "") {
+                        this.showSnack("نام رشته ورزشی الزامی است");
+                        return;
+                    }
+
+                    let model = {
+                        Model: {
+                            detailName: this.sportName,
+                            description: this.description
+                        },
+                        Address: "/api/Definitions/CreateDetailSports"
+
+                    };
+
+                    let vv = {};
+                    vv = await CallApi(model);
+
+                    if (vv.hasError) {
+                        if (vv.message.includes("نوع مورد نظر از قبل موجود است")) {
+                            this.showSnack(vv.message.replace("نوع", "رشته ورزشی"));
+                        }
+                        else {
+                            this.showSnack(vv.message);
+
+
+                        }
+                        return;
+                    }
+
+                    this.sportName = "";
+                    this.dialogSport = false;
+                    this.showSnack("رشته ورزشی با موفقیت ایجاد شد");
+                    this.GetSportList();
+
+                }
+            },
+            created: function () {
+                this.GetSportList();
+            }
+        }
+
+
+
+                //mainVueApp.$data.GetSportList();
+    </script>
+}

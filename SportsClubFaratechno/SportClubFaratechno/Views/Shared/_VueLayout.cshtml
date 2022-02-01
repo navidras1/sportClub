@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SportClubFaratechno</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+
+    <link href="~/css/materialdesignicons.min.css" rel="stylesheet" />
+    @*<link href="https://cdn.jsdelivr.net/npm/@@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">*@
+    @*<link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet">*@
+
+
+    <link href="~/css/vuetify.css" rel="stylesheet" />
+    <script src="~/js/Vue.js"></script>
+    <script src="~/js/vuetify.js"></script>
+    <script src="~/js/axios.min.js"></script>
+    <script src="~/js/CallApi.js"></script>
+    @*<script src="https://cdn.jsdelivr.net/npm/vue"></script>*@
+    <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment-jalaali@0.9.2/build/moment-jalaali.js"></script>
+    
+    <script src="~/js/Components/vue-persian-datetime-picker.umd.min.js" defer></script>
+    <meta name="viewport" content="width=device-width" />
+
+    <style>
+        .v-btn {
+            font-weight: bolder;
+            font-size: large !important;
+        }
+        .highlighted{
+            background-color : blue;
+        }
+    </style>
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    
+    <div id="mainVueApp" style="text-align:right; direction:rtl">
+        
+        <v-app>
+            
+            <v-navigation-drawer right app>
+
+                <template>
+                    <v-card class="mx-auto"
+                            width="300">
+                        <v-list>
+                            <v-list-item>
+                                <v-list-item-icon>
+                                    <v-icon>mdi-home</v-icon>
+                                </v-list-item-icon>
+
+                                <v-list-item-title>Home</v-list-item-title>
+                            </v-list-item>
+
+                            <v-list-group :value="true"
+                                          prepend-icon="mdi-account-circle">
+                                <template v-slot:activator>
+                                    <v-list-item-title>Users</v-list-item-title>
+                                </template>
+
+                                @*<v-list-group :value="true"
+                                          no-action
+                                          sub-group>
+                                <template v-slot:activator>
+                                    <v-list-item-content>
+                                        <v-list-item-title>Admin</v-list-item-title>
+                                    </v-list-item-content>
+                                </template>
+
+                                <v-list-item v-for="([title, icon], i) in admins"
+                                             :key="i"
+                                             link>
+                                    <v-list-item-title v-text="title"></v-list-item-title>
+
+                                    <v-list-item-icon>
+                                        <v-icon v-text="icon"></v-icon>
+                                    </v-list-item-icon>
+                                </v-list-item>
+                            </v-list-group>*@
+
+                                <v-list-group no-action
+                                              :value="true"
+                                              sub-group>
+                                    <template v-slot:activator>
+                                        <v-list-item-content>
+                                            <v-list-item-title>Actions</v-list-item-title>
+                                        </v-list-item-content>
+                                    </template>
+
+                                    <v-list-item v-for="([title, icon, address], i) in cruds"
+                                                 :key="i"
+                                                 link
+                                                 @@click="theEvent(address)"
+                                                 active-class="highlighted"
+                                                 :class="isCurrentPage(address) ? 'highlighted' : ''"
+                                                 >
+                                        <v-list-item-title v-text="title" link
+                                                           
+                                                           ></v-list-item-title>
+
+                                        <v-list-item-icon>
+                                            <v-icon v-text="icon"></v-icon>
+
+                                        </v-list-item-icon>
+
+
+                                    </v-list-item>
+                                </v-list-group>
+                            </v-list-group>
+                        </v-list>
+                    </v-card>
+                </template>
+
+            </v-navigation-drawer>
+
+            <v-app-bar app>
+                <!-- -->
+            </v-app-bar>
+
+            <!-- Sizes your content based upon application components -->
+            <v-main>
+
+                <!-- Provides the application the proper gutter -->
+                <v-container fluid>
+                    @RenderBody()
+                    <!-- If using vue-router -->
+                    @*<router-view></router-view>*@
+                </v-container>
+
+            </v-main>
+
+            <v-footer app>
+                this is footer
+            </v-footer>
+
+
+        </v-app>
+
+
+
+    </div>
+    @RenderSection("VueComponents", required: false)
+
+    <script>
+
+        
+
+        
+        var mainVueApp = new Vue({
+
+            el: "#mainVueApp",
+            vuetify: new Vuetify({
+                theme: { dark: true },
+                rtl: true
+            }),
+            mixins: [myMixin],
+            data: {
+                date: '1397/02/02',
+
+                datasource: {},
+                admins: [
+                    ['Management', 'mdi-account-multiple-outline'],
+                    ['Settings', 'mdi-cog-outline'],
+                ],
+                cruds: [
+                    ['باشگاه', 'mdi-home-modern', "/Home/Index"],
+                    ['سالن', 'mdi-home-map-marker', "/Home/salon"],
+                    ['رشته های ورزشی', 'mdi-dumbbell', "/Home/Sports"],
+                    ['تنظیمات بوفه', 'mdi-settings', "/Home/Buffet"],
+                    ['بوفه', 'mdi-hamburger', "/Home/BuffetShop"],
+                    ['کاربران', 'mdi-account', "/Home/Users"],
+                    ['نقش', 'mdi-account-circle', "/Home/Roles"],
+                    ['کمد', 'mdi-key', "/Home/Cabinet"],
+                    ['تراکنش', 'mdi-coin','/Home/Transactions']
+
+                ],
+                nameRules: [
+                    v => !!v || 'لطفا اطلاعات مورد نظر را وارد کنید',
+
+                ],
+                
+            },
+            
+            methods: {
+                theEvent: function (param) {
+                    //alert(param);
+                    window.location.href = param;
+                },
+                isCurrentPage: function (address) {
+                   return  window.location.href.endsWith(address);
+                },
+                focusNext(e) {
+                    const inputs = Array.from(e.target.form.querySelectorAll('input[type="text"]'));
+                    const index = inputs.indexOf(e.target);
+
+                    if (index < inputs.length) {
+                        inputs[index + 1].focus();
+                    }
+                },
+                resetForm: function () {
+                    this.$refs.form.reset();
+                    this.$refs.form.resetValidation();
+                }
+                
+
+                
+            }
+            //,
+            //components: {
+            //    DatePicker: VuePersianDatetimePicker
+            //}
+            
+
+
+
+
+        });
+
+
+                        //mainVueApp.bar();
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

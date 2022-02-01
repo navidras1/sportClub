@@ -51,6 +51,21 @@ namespace SportClubFaratechno.WebApi
             return Ok(res);
         }
 
+
+        /// <summary>
+        /// لیست دوره های مربوط به ورزش سالن
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("ListOfSessionsBySalonSportId")]
+        public IActionResult ListOfSessionsBySalonSportId(ListOfSessionsBySalonSportIdModel model)
+        {
+            var res =SCP.ListOfSessionsBySalonSportId(model);
+            return Ok(res);
+        }
+
+
+
         /// <summary>
         /// حذف دوره
         /// </summary>
@@ -113,6 +128,36 @@ namespace SportClubFaratechno.WebApi
             var res = SCP.RegisterUserSession(model);
             return Ok(res);
         }
+
+        /// <summary>
+        /// لیست کاربران شرکت کننده در دوره
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("GetListOfSessionUsersBySessionId")]
+        public IActionResult GetListOfSessionUsersBySessionId(GetListOfSessionUsersBySessionIdModel model)
+        {
+            var res = SCP.GetListOfSessionUsersBySessionId(model);
+            return Ok(res);
+
+        }
+
+
+        /// <summary>
+        /// لیست دوره های کاربر 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("GetListOfSessionUsersByUserId")]
+        public IActionResult GetListOfSessionUsersByUserId(GetListOfSessionUsersByUserIdModel model)
+        {
+            var res = SCP.GetListOfSessionUsersByUserId(model);
+            return Ok(res);
+        }
+
+
+
+
         /// <summary>
         /// ویرایش کاربر دوره
         /// </summary>
@@ -139,6 +184,38 @@ namespace SportClubFaratechno.WebApi
         }
 
         /// <summary>
+        /// انتساب برنامه به کاربر
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("AssignpExerciseProgramToSessionUser")]
+        public IActionResult AssignpExerciseProgramToSessionUser(AssignpExerciseProgramToSessionUserModel model)
+        {
+            var res = SCP.AssignpExerciseProgramToSessionUser(model);
+            return Ok(res);
+        }
+
+        
+
+        /// <summary>
+        /// حذف برنامه
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("DeleteUserExercise")]
+        public IActionResult DeleteUserExercise(DeleteUserExerciseModel model)
+        {
+            var res = DeleteUserExercise(model);
+            return Ok(res);
+        }
+
+
+        
+
+
+
+
+        /// <summary>
         /// ورود کاربر 
         /// </summary>
         /// <param name="model"></param>
@@ -150,6 +227,59 @@ namespace SportClubFaratechno.WebApi
             return Ok(res);
         }
 
+        /// <summary>
+        /// خروج کاربر
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("ExitSessionTraffic")]
+        public IActionResult ExitSessionTraffic(ExitSessionTrafficModel model)
+        {
+            var res = SCP.ExitSessionTraffic(model);
+            return Ok(res);
+        }
+
+
+        /// <summary>
+        /// دریافت شناسه کمد از طریق شناسه ترافیک
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("GetTrafficCabinetByTrafficId")]
+        public IActionResult GetTrafficCabinetByTrafficId(GetTrafficCabinetByTrafficIdModel model)
+        {
+            var res = SCP.GetTrafficCabinetByTrafficId(model);
+            return Ok(res);
+        }
+
+
+        /// <summary>
+        /// ثبت کمد کاربر دوره
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// 
+        [HttpPost("InsertTrafficCabinet")]
+        public IActionResult InsertTrafficCabinet(InsertTrafficCabinetModel model)
+        {
+            var res = SCP.InsertTrafficCabinet(model);
+            return Ok(res);
+        }
+
+
+        /// <summary>
+        /// لیست ترافیک کاربر
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("GetUserTraffic")]
+        public IActionResult GetUserTraffic(GetUserTrafficModel model)
+        {
+            var res = SCP.GetUserTraffic(model);
+            return Ok(res);
+        }
+
+
         [HttpPost("DeleteSessionUserTraffic")]
         public IActionResult DeleteSessionUserTraffic(long id)
         {
@@ -159,7 +289,7 @@ namespace SportClubFaratechno.WebApi
 
 
 
-
+        
 
 
 

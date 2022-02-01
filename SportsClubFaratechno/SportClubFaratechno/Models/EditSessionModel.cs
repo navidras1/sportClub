@@ -22,7 +22,7 @@ namespace SportClubFaratechno.Models
         public decimal? AtAprice { get; set; }
         public DateTime? SubmissionDate { get; set; }
         public string SubmissionDateShamsi { get; set; }
-        public bool? Sex { get; set; }
+        public long? Sex { get; set; }
 
         public int? NumberOfPeople { get; set; }
     }

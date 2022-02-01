@@ -20,8 +20,8 @@ namespace SportClubFaratechno.Models.ViewModels.Filters
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary
                 {
-                    { "controller", "Home" },
-                    { "action", "Login" }
+                    { "controller", "Login" },
+                    { "action", "Index" }
                 });
             }
 

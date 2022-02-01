@@ -30,12 +30,13 @@ namespace SportClubFaratechno.Models.Repository
             LogChanges.Inserted = entity;
             return entity;
         }
-        public void AddRange(IEnumerable<T> entities)
+        public List<T> AddRange(IEnumerable<T> entities)
         {
             _context.Set<T>().AddRange(entities);
             _context.SaveChanges();
             LogChanges.ActionName = "insertGroup";
-            LogChanges.Inserted =(T)entities;
+            LogChanges.GroupInserted =entities.ToList();
+            return entities.ToList();
         }
         public IQueryable<T> Find(Expression<Func<T, bool>> filter)
         {

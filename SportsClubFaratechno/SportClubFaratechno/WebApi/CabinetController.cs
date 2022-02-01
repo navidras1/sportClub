@@ -95,12 +95,71 @@ namespace SportClubFaratechno.WebApi
           return Ok( res );
         }
 
-        
+        /// <summary>
+        /// لیست کمد بر اساس نوع کمد
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// 
+        [HttpPost("GetListOfCabinetsByCabintetType")]
+        public IActionResult GetListOfCabinetsByCabintetType(GetListOfCabinetsByCabintetTypeModel model)
+        {
+            var res = SCP.GetListOfCabinetsByCabintetType(model);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// انتساب کمد به سالن
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("AssignCabinetToSalon")]
+        public IActionResult AssignCabinetToSalon(AssignCabinetToSalonModel model)
+        {
+            var res = SCP.AssignCabinetToSalon(model);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// لیست سالن های منتسب به کمد
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("GetListOfSalonAssignedToCabinet")]
+        public IActionResult GetListOfSalonAssignedToCabinet(GetListOfSalonAssignedToCabinetModel model)
+        {
+            var res = SCP.GetListOfSalonAssignedToCabinet(model);
+            return Ok(res);
+        }
+
+        /// <summary>
+        /// لیست کمد های آزاد
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("GetCabinetsWithSatuts")]
+        public IActionResult GetCabinetsWithSatuts(GetCabinetsWithSatutsModel model)
+        {
+            var res = SCP.GetCabinetsWithSatuts(model);
+            return Ok(res);
+        }
+
+
+        /// <summary>
+        /// تغییر وضعیت کمد به حالت آزاد و اشغال
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("EngageReleaseCabinet")]
+        public IActionResult EngageReleaseCabinet(EngageReleaseCabinetModel model)
+        {
+
+            var res = SCP.EngageReleaseCabinet(model);
+            return Ok(res);
+        }
 
 
 
 
-        
-        
+
     }
 }

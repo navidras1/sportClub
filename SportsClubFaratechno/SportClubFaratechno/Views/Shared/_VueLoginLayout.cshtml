@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SportClubFaratechno</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+
+    <link href="~/css/materialdesignicons.min.css" rel="stylesheet" />
+    <link href="~/css/vuetify.css" rel="stylesheet" />
+    <script src="~/js/Vue.js"></script>
+    <script src="~/js/vuetify.js"></script>
+    <script src="~/js/axios.min.js"></script>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <div id="mainVueApp">
+        <v-app>
+            @*<v-navigation-drawer app>
+
+            </v-navigation-drawer>*@
+
+            <v-app-bar app>
+                <!-- -->
+            </v-app-bar>
+
+            <!-- Sizes your content based upon application components -->
+            <v-main>
+
+                <!-- Provides the application the proper gutter -->
+                <v-container fluid>
+                    @RenderBody()
+                    <!-- If using vue-router -->
+                    @*<router-view></router-view>*@
+                </v-container>
+            </v-main>
+
+            <v-footer app>
+                this is footer
+            </v-footer>
+        </v-app>
+
+
+
+    </div>
+    @RenderSection("VueComponents", required: false)
+
+    <script>
+
+
+
+
+        var mainVueApp = new Vue({
+
+            el: "#mainVueApp",
+            vuetify: new Vuetify({
+                theme: { dark: true }
+            }),
+            data: {
+                datasource: {}
+            }
+
+        });
+
+
+                //mainVueApp.bar();
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

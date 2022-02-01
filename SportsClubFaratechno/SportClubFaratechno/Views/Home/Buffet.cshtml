@@ -1,0 +1,720 @@
+﻿
+@{
+    ViewData["Title"] = "تعریف بوفه";
+    Layout = "~/Views/Shared/_VueLayout.cshtml";
+}
+
+<h1>تنظیمات بوفه</h1>
+<v-btn @@click='showSnack("hi")'>دگمه تست</v-btn>
+
+<v-row>
+    <v-col cols="4">
+        <v-select v-model="clubSelect"
+                  :items="clubs"
+                  item-text="detailName"
+                  item-value="id"
+                  label="باشگاه"
+                  v-on:input="clubDDListChanged(`${clubSelect}`)">
+
+
+
+        </v-select>
+    </v-col>
+    <v-col cols="4">
+        <v-select v-model="salonSelect"
+                  :items="salonNames"
+                  item-text="detailName"
+                  item-value="id"
+                  label="سالن"
+                  v-on:input="SalonDDLChanged(`${salonSelect}`)">
+
+        </v-select>
+    </v-col>
+    <v-col cols="4">
+        <v-btn @@click="showRegisterBuffet=true"> ایجاد بوفه </v-btn>
+    </v-col>
+</v-row>
+
+@*دیالوگ ایجاد بوفه*@
+<v-dialog v-model="showRegisterBuffet"
+          max-width="600px" content-class="my-custom-dialog">
+
+    <v-card>
+        <v-card-title>
+            <span class="text-h5">ثبت بوفه</span>
+        </v-card-title>
+        <v-card-text>
+            <v-container>
+                <v-row>
+
+                    <v-col cols="12">
+                        <v-text-field label="نام بوفه*"
+                                      required
+                                      hint="نام بوفه را وارد کنید"
+                                      v-model="BuffetName"></v-text-field>
+                    </v-col>
+
+
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1"
+                   text
+                   @@click="showRegisterBuffet = false">
+                انصراف
+            </v-btn>
+            <v-btn color="green darken-1"
+                   text
+                   @@click="registerNewBuffet()">
+                ثبت
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+
+
+@*دیالوگ ایجاد بوفه*@
+<v-dialog v-model="showRegisterBuffet"
+          max-width="600px" content-class="my-custom-dialog">
+
+    <v-card>
+        <v-card-title>
+            <span class="text-h5">ثبت بوفه</span>
+        </v-card-title>
+        <v-card-text>
+            <v-container>
+                <v-row>
+
+                    <v-col cols="12">
+                        <v-text-field label="نام بوفه*"
+                                      required
+                                      hint="نام بوفه را وارد کنید"
+                                      v-model="BuffetName"></v-text-field>
+                    </v-col>
+
+
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1"
+                   text
+                   @@click="showRegisterBuffet = false">
+                انصراف
+            </v-btn>
+            <v-btn color="green darken-1"
+                   text
+                   @@click="registerNewBuffet()">
+                ثبت
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+
+
+
+<v-data-table :headers="BuffetTblHeader"
+              :items="BuffetTbl"
+              :items-per-page="5"
+              class="elevation-1">
+    <template v-slot:body="{items}">
+        <tbody>
+            <tr v-for="item in items" :key="item.id" style="text-align:right" @@click="selectedBuffet=item.buffetId; GetBuffetDetail();" onclick="highliteTR(this)">
+                <td>{{ item.detailName }}</td>
+                <td>
+                    <v-select
+                               :items="BuffetTypeTbl"
+                  item-text="detailName"
+                  item-value="id"
+                  label="دسته بندی" onchange="alert(this.value)"
+                              >
+                        @*<option v-for="ii in BuffetTypeTbl" :vlaue="ii.id">{{ii.detailName}}</option>*@
+                    </v-select>
+                </td>
+
+                @*<td>
+                        <v-btn class="mx-2" fab dark small color="pink" @@click="onButtonClick(item.id)">
+                            <v-icon dark>mdi-heart</v-icon>
+                        </v-btn>
+                    </td>*@
+            </tr>
+        </tbody>
+    </template>
+
+</v-data-table>
+
+<hr />
+<v-btn @@click="showItemCateguryDialog=true">تعریف دسته بندی جنس</v-btn>
+<v-dialog v-model="showItemCateguryDialog"
+          max-width="600px" content-class="my-custom-dialog">
+
+    <v-card>
+        <v-card-title>
+            <span class="text-h5">ثبت دسته بندی جنس</span>
+        </v-card-title>
+        <v-card-text>
+            <v-container>
+                <v-row>
+
+                    <v-col cols="12">
+                        <v-text-field label="نام دسته بندی*"
+                                      required
+                                      hint="نام دسته بندی را وارد کنید"
+                                      v-model="BuffetTypeName"></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                        <v-text-field label="توضیحات"
+                                      required
+                                      hint="نام دسته بندی را وارد کنید"
+                                      v-model="BuffetTypeNameDescription"></v-text-field>
+                    </v-col>
+
+
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1"
+                   text
+                   @@click="showItemCateguryDialog = false">
+                انصراف
+            </v-btn>
+            <v-btn color="green darken-1"
+                   text
+                   @@click="registerNewBuffetTyepeId()">
+                ثبت
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+<v-data-table :headers="BuffetTypeHeader"
+              :items="BuffetTypeTbl"
+              :items-per-page="5"
+              class="elevation-1">
+    <template v-slot:body="{items}">
+        <tbody>
+            <tr v-for="item in items" :key="item.id" style="text-align:right" @@click="SelectedItemType=item.id; GetListOfBuffetItems();" onclick="highliteTR(this)">
+                <td>{{ item.detailName }}</td>
+                <td>{{item.description}}</td>
+
+                @*<td>
+                        <v-btn class="mx-2" fab dark small color="pink" @@click="onButtonClick(item.id)">
+                            <v-icon dark>mdi-heart</v-icon>
+                        </v-btn>
+                    </td>*@
+            </tr>
+        </tbody>
+    </template>
+
+</v-data-table>
+
+<hr />
+<v-btn @@click="ShowBuffetItemdialog=true">تعریف ایتم بوفه</v-btn>
+<v-dialog v-model="ShowBuffetItemdialog"
+          max-width="600px" content-class="my-custom-dialog">
+
+    <v-card>
+        <v-card-title>
+            <span class="text-h5">ثبت آیتم بوفه</span>
+        </v-card-title>
+        <v-card-text>
+            <v-container>
+                <v-row>
+
+                    <v-col cols="12">
+                        <v-text-field label="نام آیتم*"
+                                      required
+                                      hint="نام آیتم را وارد کنید"
+                                      v-model="BuffetItem"></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                        <v-text-field label="توضیحات"
+                                      required
+                                      v-model="BuffetItemDescription"></v-text-field>
+                    </v-col>
+
+
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1"
+                   text
+                   @@click="ShowBuffetItemdialog = false">
+                انصراف
+            </v-btn>
+            <v-btn color="green darken-1"
+                   text
+                   @@click="registerNewBuffetItem()">
+                ثبت
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+
+<v-data-table :headers="BuffetItemHeader"
+              :items="BuffetItemTbl"
+              :items-per-page="5"
+              class="elevation-1">
+    <template v-slot:body="{items}">
+        <tbody>
+            <tr v-for="item in items" :key="item.id" style="text-align:right" onclick="highliteTR(this)">
+                <td>{{ item.itemName }}</td>
+                <td>{{item.price}}</td>
+                <td>{{item.quantity}}</td>
+                <td><v-btn @@click="BuffetDetailId=item.id;ShowChargeItemOfBuffet=true;">شارژ </v-btn> </td>
+                <td> <v-btn @@click="ShowPurchaseDialog=true;BuffetDetailId=item.id;GetUsers();">خرید</v-btn> </td>
+                @*<td>
+                        <v-btn class="mx-2" fab dark small color="pink" @@click="onButtonClick(item.id)">
+                            <v-icon dark>mdi-heart</v-icon>
+                        </v-btn>
+                    </td>*@
+            </tr>
+        </tbody>
+    </template>
+
+</v-data-table>
+
+<v-dialog v-model="ShowChargeItemOfBuffet"
+          max-width="600px" content-class="my-custom-dialog">
+
+    <v-card>
+        <v-card-title>
+            <span class="text-h5">شارژ آیتم بوفه</span>
+        </v-card-title>
+        <v-card-text>
+            <v-container>
+                <v-row>
+
+                    <v-col cols="12">
+                        <v-text-field label="تعداد*"
+                                      required
+                                      hint="تعداد آیتم را وارد کنید"
+                                      v-model="itemQuantity"></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                        <v-text-field label="قیمت"
+                                      required
+                                      v-model="itemPrice"></v-text-field>
+                    </v-col>
+
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1"
+                   text
+                   @@click="ShowChargeItemOfBuffet = false">
+                انصراف
+            </v-btn>
+            <v-btn color="green darken-1"
+                   text
+                   @@click="ChargeBuffetItem()">
+                ثبت
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+
+<v-dialog v-model="ShowPurchaseDialog"
+          max-width="600px" content-class="my-custom-dialog">
+
+    <v-card>
+        <v-card-title>
+            <span class="text-h5">خرید آیتم بوفه</span>
+        </v-card-title>
+        <v-card-text>
+            <v-container>
+                <v-row>
+
+                    <v-col cols="8">
+                        <v-text-field label="تعداد*"
+                                      required
+                                      hint="تعداد آیتم را وارد کنید"
+                                      v-model="purchaseQuantity"></v-text-field>
+                    </v-col>
+
+                    <v-col cols="8">
+                        <template>
+
+                            <v-data-table :headers="userTblHeader"
+                                          :items="userTblSource"
+                                          :items-per-page="5"
+                                          item-key="table_header_index"
+                                          class="elevation-1">
+                                <template v-slot:body="{items}">
+                                    <tbody>
+                                        <tr v-for="item in items" :key="item.id" style="text-align:right" onclick="highliteTR(this)" @@click="selectedUserId=item.id; ">
+                                            <td>{{ item.userName }}</td>
+                                            @*<td>{{ item.role }}</td>
+                                            <td>{{ item.email }}</td>
+                                            <td>{{ item.phone }}</td>
+                                            <td><v-btn @@click="RegisterUserForSession(item.id)">ثبت نام</v-btn> </td>*@
+
+
+
+
+                                           
+
+
+
+                                        </tr>
+                                    </tbody>
+                                </template>
+
+                            </v-data-table>
+
+                        </template>
+                    </v-col>
+                    
+
+        </v-card-text>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1"
+                   text
+                   @@click="ShowPurchaseDialog = false">
+                انصراف
+            </v-btn>
+            <v-btn color="green darken-1"
+                   text
+                   @@click="purchaseItem()">
+                ثبت
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+</v-dialog>
+
+
+
+<v-snackbar v-model="snackbar"
+            :timeout="snackBarTimeout"
+            color="blue-grey">
+    {{ snackbarMessage }}
+</v-snackbar>
+
+@section VueComponents{
+    <script>
+        myMixin = {
+
+            data: {
+                snackbar: false,
+                snackbarMessage: "",
+
+                snackbarColor: "",
+                snackBarTimeout: 3000,
+
+
+                clubs: [],
+                clubSelect: {},
+                salonNames: [],
+                salonSelect: [],
+                showRegisterBuffet: false,
+                BuffetName: "",
+                BuffetTblHeader: [
+                    { text: "نام بوفه", value: "detailName" },
+
+                ],
+                BuffetTbl: [],
+                selectedBuffet: 0,
+                showItemCateguryDialog: false,
+                BuffetTypeName: "",
+                BuffetTypeNameDescription: "",
+                BuffetTypeHeader: [
+                    { text: "نام دسته بندی", value: "detailName" },
+                    { text: "توضیحات", value: "Description" }
+                ],
+                BuffetTypeTbl: [],
+                BuffetTypeMenuSource: [],
+                BuffetTypeMenuSelect: {},
+                ShowBuffetItemdialog: false,
+                BuffetItem: "",
+                BuffetItemDescription: "",
+                SelectedItemType: 0,
+                BuffetItemHeader: [
+                    { text: "نام آیتم", value: "itemName" },
+                    { text: "قیمت", value: "price" },
+                    { text: "تعداد", value: "quantity" }
+                ],
+                BuffetItemTbl: [],
+                ShowChargeItemOfBuffet: false,
+                itemQuantity: 0,
+                itemPrice: 0,
+                BuffetDetailId: 0,
+                ShowPurchaseDialog: false,
+                purchaseQuantity: 0,
+                userTblHeader: [
+                    { text: 'نام کاربری', value: 'userName' },
+
+                    { text: 'نقش', value: 'role' },
+
+                    { text: 'ایمیل', value: 'email' },
+                    { text: 'تلفن', value: 'phone' },
+
+                ],
+                userTblSource: [],
+                selectedUserId: 0,
+            },
+            methods: {
+
+
+                getClubs: async function () {
+
+                    let model = {
+                        Model: null,
+                        Address: "/api/Definitions/GetClubList"
+                    };
+                    let vv = await CallApi(model);
+                    this.clubs = vv.data;
+
+                },
+                showSnack: function (snackbarMessage) {
+                    this.snackbar = true;
+                    this.snackbarMessage = snackbarMessage;
+                },
+                test: function () {
+                    this.showSnack("تست");
+                },
+                clubDDListChanged: async function (a) {
+
+                    //alert(a);
+                    //let ss = a;
+                    await this.getSalonListByClubId(a);
+                },
+
+                getSalonListByClubId: async function (clubIdParam) {
+
+                    let model = {
+                        Model: {
+                            clubId: clubIdParam
+                        },
+                        Address: "/api/Club/GetSalonListByClubId"
+                    };
+                    let vv = await CallApi(model);
+
+                    this.salonNames = vv.data;
+                    if (this.salonNames) {
+                        //this.salonSelect = this.salonNames[0];
+                    }
+
+                    model = {
+                        Model: {
+                            cabinetId: this.cabinetId
+                        },
+                        Address: "/api/Cabinet/GetListOfSalonAssignedToCabinet"
+
+                    }
+                    vv = await CallApi(model);
+                    this.salonSelect = vv.data.map(pp => pp.salonId);
+
+
+                    //return vv.data;
+                },
+
+                GetListOfSalonBuffet: async function (val) {
+                    //alert(this.salonSelect);
+                    let model = {
+                        Model: {
+                            salonId: val
+                        },
+                        Address: "/api/Buffet/GetlistOfSalonBuffets"
+                    };
+                    let vv = await CallApi(model);
+
+                    this.BuffetTbl = vv.data;
+                },
+                registerNewBuffet: async function () {
+                    /*alert(JSON.stringify( this.clubSelect) + " " + JSON.stringify( this.salonSelect));*/
+
+                    let model = {
+                        Model: {
+                            detailName: this.BuffetName,
+
+                        },
+                        Address: "/api/Definitions/CreateDetailBuffet"
+
+                    };
+                    let vv = await CallApi(model);
+
+                    model = {
+                        Model: {
+                            salonId: this.salonSelect,
+                            buffetId: vv.data.id
+                        },
+                        Address: "/api/Buffet/AssignBuffetToSalon"
+                    };
+                    vv = await CallApi(model);
+                    vv = await this.GetListOfSalonBuffet(vv.data.salonId);
+
+                    this.showSnack("بوفه با موفقیت ایجاد شد.");
+                    this.showRegisterBuffet = false;
+
+
+
+                },
+                SalonDDLChanged: async function (val) {
+
+                    //alert(val);
+                    await this.GetListOfSalonBuffet(val);
+                },
+                GetBuffetDetail: function () {
+
+                },
+
+                registerNewBuffetTyepeId: async function () {
+
+                    let model = {
+                        Model: {
+                            detailName: this.BuffetTypeName,
+                            description: this.BuffetTypeNameDescription
+                        },
+                        Address: "/api/Definitions/CreateBuffetItemType"
+                    };
+                    let vv = await CallApi(model);
+                    await this.GetBuffetType();
+
+
+                },
+
+                GetBuffetType: async function () {
+
+                    let model = {
+                        Model: null,
+                        Address: "/api/Definitions/GetBuffetItemTypeList"
+                    };
+                    let vv = await CallApi(model);
+                    this.BuffetTypeTbl = vv.data;
+                    this.BuffetTypeMenuSource = vv.data;
+
+                },
+
+                registerNewBuffetItem: async function () {
+
+                    //alert(this.SelectedItemType);
+
+                    let model = {
+                        Model: {
+                            detailName: this.BuffetItem,
+                            description: this.BuffetItemDescription
+                        },
+                        Address: "/api/Definitions/CreateDetailBuffetItems"
+                    };
+                    let vv = await CallApi(model);
+
+                    model = {
+                        Model: {
+                            buffetItemId: vv.data.id,
+                            buffetItemTypeId: this.SelectedItemType
+                        },
+                        Address: "/api/Buffet/AssignBuffetItemToBuffetItemType"
+                    };
+
+                    let bfItmId = vv.data.id;
+                    vv = await CallApi(model);
+
+                    model = {
+                        Model: {
+                            buffetId: this.selectedBuffet,
+                            items: [
+                                {
+                                    buffetItem: bfItmId,
+                                    price: 0,
+                                    quantity: 0
+                                }
+                            ]
+                        },
+                        Address: "/api/Buffet/AddBuffetItem"
+                    };
+                    vv = await CallApi(model);
+                    await this.GetListOfBuffetItems();
+                    this.ShowBuffetItemdialog = false;
+
+                },
+
+                GetListOfBuffetItems: async function () {
+                    let model = {
+                        Model: {
+                            itemId: null,
+                            itemTypeId: this.SelectedItemType,
+                            buffetId: this.selectedBuffet
+                        },
+                        Address: "/api/Buffet/GetListOfItemsByTypeBySalon"
+                    };
+                    let vv = await CallApi(model);
+                    this.BuffetItemTbl = vv.data;
+
+                },
+
+                ChargeBuffetItem: async function () {
+                    let model = {
+                        Model: {
+                            id: this.BuffetDetailId,
+                            price: this.itemPrice,
+                            quantity: this.itemQuantity
+                        },
+                        Address: "/api/Buffet/UpdateBuffetItem"
+                    };
+                    let vv = await CallApi(model);
+                    this.ShowChargeItemOfBuffet = false;
+                    await this.GetListOfBuffetItems();
+
+                },
+
+                purchaseItem: async function () {
+                    //alert(this.selectedUserId + " " + this.BuffetDetailId);
+                    let model = {
+                        Model: {
+                            id: this.BuffetDetailId,
+                            quantity: this.purchaseQuantity,
+                            userId: this.selectedUserId
+                        },
+                        Address: "/api/Buffet/PurchaseItem"
+
+                    };
+                    let vv = await CallApi(model);
+                    this.ShowPurchaseDialog = false;
+                    await this.GetListOfBuffetItems();
+
+                },
+
+                GetUsers: async function () {
+
+                    // //alert(this.selectedSessionId);
+
+
+                    var model = {
+                        Model: null,
+                        Address: "/api/Authenticate/listOfUsers"
+
+                    };
+
+                    let vv = await CallApi(model);
+
+                    this.userTblSource = vv.data;
+                },
+
+            },
+            created:function() {
+                this.getClubs();
+                this.GetBuffetType();
+            }
+
+
+        }
+        //mainVueApp.
+        //mainVueApp.
+
+        function highliteTR(tr) {
+
+            let theRows = tr.parentNode.rows;
+
+
+            for (let i = 0; i < theRows.length; i++) {
+                let ss = theRows[i];
+                ss.classList.remove("bg-info");
+
+            }
+            tr.classList.add("bg-info");
+
+        }
+
+    </script>
+
+}
+

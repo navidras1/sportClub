@@ -61,6 +61,30 @@ namespace SportClubFaratechno.WebApi
             return Ok(res);
         }
 
+        /// <summary>
+        /// لیست ورزش های مرتبط با سالن
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("GetListofSporsBySalonId")]
+        public IActionResult GetListofSporsBySalonId(GetListofSporsBySalonIdModel model)
+        {
+            var res = SCP.GetListofSporsBySalonId(model);
+            return Ok(res);
+        }
+
+
+        /// <summary>
+        ///  لیست ورزش های غیر مرتبط با سالن
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("GetListofSporsByNotInSalonId")]
+        public IActionResult GetListofSporsByNotInSalonId(GetListofSporsBySalonIdModel model)
+        {
+            var res = SCP.GetListofSporsByNotInSalonId(model);
+            return Ok(res);
+        }
 
         /// <summary>
         /// انتساب دستگاه به سالن
@@ -113,6 +137,7 @@ namespace SportClubFaratechno.WebApi
             return Ok(res);
         }
 
+        
 
 
 
