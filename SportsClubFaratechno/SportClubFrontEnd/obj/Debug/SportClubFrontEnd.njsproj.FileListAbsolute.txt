@@ -1,6 +1,0 @@
-C:\Users\SoftOne\source\repos\SportsClubFaratechno\SportClubFrontEnd\obj\Debug\SportClubFrontEnd.njsproj.AssemblyReference.cache
-C:\Users\SoftOne\source\repos\SportsClubFaratechno\SportClubFrontEnd\obj\Debug\SportClubFrontEnd.njsproj.CoreCompileInputs.cache
-C:\Users\SoftOne\source\repos\SportsClubFaratechno\SportClubFrontEnd\bin\Microsoft.NodejsTools.WebRole.dll
-D:\SportClub\sportclub_rasoli\SportsClubFaratechno\SportClubFrontEnd\obj\Debug\SportClubFrontEnd.njsproj.AssemblyReference.cache
-D:\SportClub\sportclub_rasoli\SportsClubFaratechno\SportClubFrontEnd\obj\Debug\SportClubFrontEnd.njsproj.CoreCompileInputs.cache
-D:\SportClub\sportclub_rasoli\SportsClubFaratechno\SportClubFrontEnd\bin\Microsoft.NodejsTools.WebRole.dll
