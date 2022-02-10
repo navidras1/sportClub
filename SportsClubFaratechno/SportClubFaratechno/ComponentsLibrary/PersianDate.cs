@@ -28,8 +28,12 @@ namespace SportClubFaratechno.ComponentsLibrary
 
         }
 
-        public static DateTime ConvertToGregorian(string persianDate)
+        public static DateTime? ConvertToGregorian(string persianDate)
         {
+            if (string.IsNullOrEmpty(persianDate))
+            {
+                return null;
+            }
             DateTime dt = DateTime.Parse(persianDate, new CultureInfo("fa-IR"));
             return dt;
         }

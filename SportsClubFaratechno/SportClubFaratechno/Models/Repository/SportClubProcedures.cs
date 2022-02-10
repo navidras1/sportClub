@@ -838,7 +838,26 @@ namespace SportClubFaratechno.Models.Repository
                        where a.TypeName == "وضعیت دوره" && b.DetailName == "در انتظار برگزاری"
                        select b).FirstOrDefault();
 
-            sessionRepos.Add(new Session { SalonSportId = model.SalonSportId, StartDate = PersianDate.ConvertToGregorian(model.StartDateShamsi), EndDate = PersianDate.ConvertToGregorian(model.EndDateShamsi), Description = model.Description, EndDateShamsi = model.EndDateShamsi, StartDateShamsi = model.StartDateShamsi, StartTime = model.StartTime, EndTime = model.EndTime, Sex = model.Sex, NumberOfPeople = model.NumberOfPeople, State = res.Id, NumberOfSessions = model.NumberOfSessions, AtAprice = model.AtAprice, TotalPrice = model.TotalPrice, SubmissionDate = DateTime.Now, SubmissionDateShamsi = PersianDate.NowGetWithSlash });
+            //if()
+
+            sessionRepos.Add(new Session { SalonSportId = model.SalonSportId, 
+                StartDate = PersianDate.ConvertToGregorian(model.StartDateShamsi), 
+                EndDate = PersianDate.ConvertToGregorian(model.EndDateShamsi), 
+                Description = model.Description, 
+                EndDateShamsi = model.EndDateShamsi, 
+                StartDateShamsi = model.StartDateShamsi, 
+                StartTime = model.StartTime, 
+                EndTime = model.EndTime, 
+                Sex = model.Sex, 
+                NumberOfPeople = model.NumberOfPeople, 
+                State = res.Id, 
+                NumberOfSessions = model.NumberOfSessions, 
+                AtAprice = model.AtAprice, 
+                TotalPrice = model.TotalPrice, 
+                SubmissionDate = DateTime.Now, 
+                SubmissionDateShamsi = PersianDate.NowGetWithSlash,
+            SessionTypeId= model.SessionTypeId
+            });
 
             Response.LogChanges = sessionRepos.LogChanges;
 

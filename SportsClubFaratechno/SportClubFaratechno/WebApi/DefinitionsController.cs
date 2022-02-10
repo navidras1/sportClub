@@ -283,7 +283,7 @@ namespace SportClubFaratechno.WebApi
         [HttpPost("CreateSessionType")]
         public IActionResult CreateSessionType(CreateDetailModel model)
         {
-            var res = SCP.CreateDetailType("نوع جلسه", model.DetailName, model.Description);
+            var res = SCP.CreateDetailType("جلسه", model.DetailName, model.Description);
             return Ok(res);
 
         }
@@ -297,7 +297,7 @@ namespace SportClubFaratechno.WebApi
         [HttpPost("ListOfSessionTypes")]
         public IActionResult ListOfSessionTypes()
         {
-            var res = SCP.GetListOfDetails("نوع جلسه");
+            var res = SCP.GetListOfDetails("جلسه");
             return Ok(res);
         }
 
@@ -310,7 +310,7 @@ namespace SportClubFaratechno.WebApi
         [HttpPost("UpdateSessionType")]
         public IActionResult UpdateSessionType(UpdateDetailModel model)
         {
-            var res = SCP.UpdateDetails("نوع جلسه", model.OldName, model.NewName);
+            var res = SCP.UpdateDetails("جلسه", model.OldName, model.NewName);
             return Ok(res);
         }
 

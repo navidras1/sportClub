@@ -6,9 +6,7 @@
 
 <h2>سالن</h2>
 
-
 <template>
-
 
     <v-btn @@click="GetClubList()">سالن جدید</v-btn>
     <template>
@@ -88,28 +86,37 @@
                         <v-card-text>
                             <v-container>
                                 <v-row>
+                                    <v-col cols="1"
+                                           sm="6"
+                                           md="4">
+                                        <v-select v-model="registerSessionModel.sessionTypeId"
+                                                  :items="sessionTypeSource"
+                                                  item-text="detailName"
+                                                  item-value="id"
+                                                  label="نوع جلسه"
+                                                  required
+                                                  v-on:input="SessionTypeDDListChanged()"></v-select>
+
+
+                                    </v-col>
+                                </v-row>
+                                <v-row>
                                     <v-col cols="12"
                                            sm="6"
                                            md="4">
-                                        <v-text-field v-model="registerSessionModel.numberOfSessions" label="تعداد جلسات*"
+                                        <v-text-field v-model="registerSessionModel.numberOfSessions"
+                                                      v-show="registerSessionModelShow.numberOfSessions"
+                                                      label="تعداد جلسات*"
                                                       required></v-text-field>
                                     </v-col>
                                     <v-col cols="12"
                                            sm="6"
                                            md="4">
-                                        <v-text-field v-model="picker" label="تاریخ پایان*"
+                                        <v-text-field v-model="registerSessionModel.startDateShamsi" label="تاریخ شروع*"
                                                       hint="1400/03/01"
                                                       persistent-hint
+                                                      v-show="registerSessionModelShow.startDateShamsi"
                                                       required></v-text-field>
-                                        <v-date-picker v-model="picker"
-                                                       year-icon="mdi-calendar-blank"
-                                                       prev-icon="mdi-skip-previous"
-                                                       next-icon="mdi-skip-next"
-                                                       locale="fa"
-                                                       >
-
-
-                                        </v-date-picker>
                                     </v-col>
                                     <v-col cols="12"
                                            sm="6"
@@ -117,6 +124,7 @@
                                         <v-text-field v-model="registerSessionModel.endDateShamsi" label="تاریخ پایان*"
                                                       hint="1400/03/01"
                                                       persistent-hint
+                                                      v-show="registerSessionModelShow.endDateShamsi"
                                                       required></v-text-field>
                                     </v-col>
                                     <v-col cols="12">
@@ -129,6 +137,7 @@
                                     </v-col>
                                     <v-col cols="12">
                                         <v-text-field v-model="registerSessionModel.totalPrice" label="قیمت*"
+                                                      v-show="registerSessionModelShow.totalPrice"
                                                       required></v-text-field>
                                     </v-col>
                                     <v-col cols="12">
@@ -209,9 +218,6 @@
             </template>
 
         </v-data-table>
-
-
-
 
     </template>
 
@@ -439,7 +445,7 @@
                 activePicker: null,
                 date: '2018-03-02',
                 salonName: "",
-                picker: null ,//(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+                picker: null,//(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
                 showSports: false,
 
                 dialogSession: false,
@@ -502,7 +508,6 @@
 
                 ],
                 sessionTblSource: [],
-
                 selectedSalonSportId: 0,
 
                 registerSessionModel: {
@@ -519,9 +524,20 @@
                     submissionDate: null,
                     submissionDateShamsi: null,
                     sex: null,
-                    numberOfPeople: null
+                    numberOfPeople: null,
+                    sessionTypeId: null,
+
 
                 },
+                registerSessionModelShow: {
+
+                    startDateShamsi: true,
+                    endDateShamsi: true,
+                    numberOfSessions: true,
+                    totalPrice: true,
+                },
+
+
                 showRegisterUserForSessionDialog: false,
 
 
@@ -548,15 +564,43 @@
 
                 ],
                 userSessionTblSource: [],
-                sexTypeSource: []
+                sexTypeSource: [],
+
+                sessionTypeSource: [],
+
             },
             created: async function () {
                 await this.GetsSexTypes();
+                await this.GetListOfSessionTypes();
             },
             methods: {
 
 
+                SessionTypeDDListChanged: function () {
 
+                    var e = this.registerSessionModel.sessionTypeId;
+                    //alert(e);
+
+                    if (e == 1) {
+                        this.registerSessionModelShow.startDateShamsi = true;
+                        this.registerSessionModelShow.endDateShamsi = true;
+                        this.registerSessionModelShow.numberOfSessions = true;
+                        this.registerSessionModelShow.totalPrice = true;
+                    }
+                    else if (e == 2) {
+                        this.registerSessionModelShow.startDateShamsi = false;
+                        this.registerSessionModelShow.endDateShamsi = false;
+                        this.registerSessionModelShow.numberOfSessions = true;
+                        this.registerSessionModelShow.totalPrice = true;
+
+                    }
+                    else if (e == 3) {
+                        this.registerSessionModelShow.startDateShamsi = false;
+                        this.registerSessionModelShow.endDateShamsi = false;
+                        this.registerSessionModelShow.numberOfSessions = false;
+                        this.registerSessionModelShow.totalPrice = false;
+                    }
+                },
                 GetsSexTypes: async function () {
                     let model = {
                         Model: null,
@@ -565,16 +609,13 @@
                     let vv = await CallApi(model);
                     this.sexTypeSource = vv.data;//= this.sexTypeSource;
                 },
-
                 clubDDListChanged: function () {
                     this.focusNext();
                 },
-
                 showSnack: function (snackbarMessage) {
                     this.snackbar = true;
                     this.snackbarMessage = snackbarMessage;
                 },
-
                 GetClubList: async function () {
 
 
@@ -588,7 +629,6 @@
 
                 },
                 createSalon: async function (club, salon) {
-
 
                     if (salon == undefined || salon.trim() == "") {
                         this.showSnack("نام باشگاه الزامی است");
@@ -649,7 +689,6 @@
                     this.dialogSalon = false;
                     this.resetForm();
 
-
                 }
                 ,
                 clicked: async function (item) {
@@ -703,7 +742,6 @@
                     this.dialogSports = true;
 
                 },
-
 
                 assignSportToSalon: async function (sportId, salonId) {
 
@@ -762,7 +800,6 @@
                     this.sessionTblSource = vv.data;
 
                 },
-
                 RegisterSession: async function () {
 
                     this.registerSessionModel.salonSportId = this.selectedSalonSportId;
@@ -770,7 +807,6 @@
                     let model = {
                         Model: this.registerSessionModel
                         , Address: "/api/Session/CreateSession"
-
                     };
                     let vv = await CallApi(model);
                     if (vv.hasError) {
@@ -786,12 +822,9 @@
                             },
                             Address: "/api/Session/ListOfSessionsBySalonSportId"
                         }
-
                         vv = await CallApi(model);
                         this.sessionTblSource = vv.data;
-
                     }
-
                 },
 
                 GetUsers: async function () {
@@ -831,7 +864,6 @@
                         await this.SessionSelected();
                     }
 
-
                 },
 
                 SessionSelected: async function () {
@@ -861,6 +893,7 @@
 
                     };
                     let vv = await CallApi(model);
+                    this.sessionTypeSource = vv.data;
                 }
 
 

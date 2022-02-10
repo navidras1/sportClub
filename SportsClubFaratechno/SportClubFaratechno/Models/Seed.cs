@@ -115,6 +115,7 @@ namespace SportClubFaratechno.Models
 
 
 
+
                 };
 
                 SportClubReposDI<DetailType>.OBJ.AddRange(detailTypes);
