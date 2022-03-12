@@ -24,6 +24,19 @@ namespace SportClubFaratechno.WebApi
            return  Ok(res);
         }
 
+
+        /// <summary>
+        /// حذف باشگاه
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("RemoveClub")]
+        public IActionResult RemoveClub(RemoveClubModel model)
+        {
+            var res = SCP.RemoveClub(model);
+            return Ok(res);
+        }
+
         /// <summary>
         /// انتساب سالن به باشگاه
         /// </summary>
@@ -61,6 +74,8 @@ namespace SportClubFaratechno.WebApi
             var res = SCP.GetSalonListByClubId(model);
             return Ok(res);
         }
+
+        //public IActionResult RemoveClubById() { }
 
     }
 }

@@ -48,6 +48,7 @@ namespace SportClubFaratechno.Controllers
             {
                 //HttpContext.Session.SetString("token", resObj.token);
                 HttpContext.Session.SetObject("Auth", resObj);
+
                 //return RedirectToAction("index");
                 resObjClone.token = "true";
             }
@@ -55,9 +56,36 @@ namespace SportClubFaratechno.Controllers
             {
                 resObjClone.token = "false";
             }
-            
+
             return Json(resObjClone);
         }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.SetObject("Auth", null);
+            return Redirect("/Home/Index");
+        }
+
+
+        public IActionResult Dispatcher()
+        {
+            var resLogin = HttpContext.Session.GetObject<LoginResponse>("Auth");
+
+            if (resLogin.roles[0] == "Admin")
+            {
+
+                return this.Redirect("/Home/Index");
+            }
+            else if(resLogin.roles[0] == "Member")
+            {
+                return Redirect("/User/Index");
+            }
+            else
+            {
+                return Redirect("");
+            }
+        }
+
 
 
         public IActionResult CallApi([FromBody] CallApiModel model)
@@ -81,7 +109,7 @@ namespace SportClubFaratechno.Controllers
             else
             {
                 //var data = new StringContent(string.Empty);
-                var data= new StringContent(string.Empty, Encoding.UTF8, "application/json");
+                var data = new StringContent(string.Empty, Encoding.UTF8, "application/json");
                 res = httpClient.PostAsync($"{scheme}://{host}{model.Address}", data).Result.Content.ReadAsStringAsync().Result;
             }
 
@@ -96,6 +124,6 @@ namespace SportClubFaratechno.Controllers
         }
 
 
-        
+
     }
 }

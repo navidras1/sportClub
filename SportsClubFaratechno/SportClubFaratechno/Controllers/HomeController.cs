@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace SportClubFaratechno.Controllers
 {
-    //[FrontEndAuthentication]
+    [FrontEndAuthentication]
+    [FrontEndAuthorization(Role = "Admin")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
 
         public HomeController(ILogger<HomeController> logger)
         {

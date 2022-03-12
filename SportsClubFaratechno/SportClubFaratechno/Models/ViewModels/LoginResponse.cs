@@ -11,5 +11,7 @@ namespace SportClubFaratechno.Models.ViewModels
         public DateTime expiration { get; set; }
         public List<string> roles { get; set; }
         public List<object> accessRoles { get; set; }
+        public long UserId { get; set; }
+        public string UserName { get; set; }
     }
 }

@@ -250,6 +250,13 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:SportClubFaratechno.WebApi.ClubController.RemoveClub(SportClubFaratechno.Models.RemoveClubModel)">
+            <summary>
+            حذف باشگاه
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
         <member name="M:SportClubFaratechno.WebApi.ClubController.AssignSalonToClub(SportClubFaratechno.Models.AssignSalonToClubModel)">
             <summary>
             انتساب سالن به باشگاه

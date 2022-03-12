@@ -20,7 +20,7 @@ Vue.component('login', {
             await axios.post("/General/Login", LoginModel).then(response => vv = response).catch(err => console.log(err));
 
             if (vv.data.token == "true") {
-                window.location.href = "/Home/Index";
+                window.location.href = "/General/Dispatcher";
             }
             else {
                 this.snackbar = true;
@@ -32,7 +32,7 @@ Vue.component('login', {
 <div style="text-align: right; direction: rtl; width: 322px;  margin: auto;">
         <v-text-field label="نام کاربری"
                       hide-details="auto" v-model="userName"></v-text-field>
-        <v-text-field label="رمز عبور" v-model="password"></v-text-field>
+        <v-text-field label="رمز عبور" v-model="password" type="password"></v-text-field>
         <v-btn v-on:click="login()">ورود</v-btn>
 
         <v-snackbar v-model="snackbar"

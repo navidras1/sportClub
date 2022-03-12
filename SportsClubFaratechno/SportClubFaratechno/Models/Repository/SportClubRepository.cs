@@ -46,6 +46,8 @@ namespace SportClubFaratechno.Models.Repository
             query = query.Where(filter);
             return query;
         }
+
+        
         public bool Exists(Expression<Func<T, bool>> filter)
         {
             DbSet<T> dbSet1 = _context.Set<T>();

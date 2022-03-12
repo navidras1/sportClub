@@ -10,7 +10,25 @@ namespace SportClubFaratechno.Models
 {
     public static class TheServiceProvider
     {
-        public static IServiceProvider Instance { get; set; }
+        private static IServiceProvider instance;
+
+        public static IServiceProvider Instance { 
+            get { 
+                return instance.CreateScope().ServiceProvider;
+            } 
+            set {
+                instance = value;
+            } 
+        }
+
+
+        //public static IServiceProvider ScopedInstance
+        //{
+        //    get
+        //    {
+        //        return Instance.CreateScope().ServiceProvider;
+        //    }
+        //}
     }
 
     public static class SportClubReposDI<T> where T : class
@@ -19,6 +37,8 @@ namespace SportClubFaratechno.Models
         {
             get
             {
+
+                //var ss= TheServiceProvider.Instance.CreateScope();
                 return TheServiceProvider.Instance.GetService<IGenericRepository<T>>();
             }
         }

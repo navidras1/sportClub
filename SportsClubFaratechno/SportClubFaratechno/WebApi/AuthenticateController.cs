@@ -77,16 +77,18 @@ namespace SportClubFaratechno.WebApi
                                      join k in sportClubFaratechnoDBContext.Access on j.AccessId equals k.Id
                                      select k;
 
-
+                //user.Id
 
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo,
                     Roles = userRoles,
-                    AccessRoles = theAccessRoles.ToList()
+                    AccessRoles = theAccessRoles.ToList(),
+                    UserId = user.Id,
+                    UserName = user.UserName
 
-                });
+                }); ;
             }
             else
             {
@@ -402,9 +404,6 @@ namespace SportClubFaratechno.WebApi
             {
                 return StatusCode(StatusCodes.Status404NotFound, new Response { Status = "Error", Message = "دسترسی مورد نظر جستجو نشد." });
             }
-
-
-
 
             sportClubFaratechnoDBContext.UserAccess.Add(new UserAccess { AccessId = model.AccessId.Value, HasAccess = model.HasAccess.Value, UserId = theUser.Id, SubmissionDate = DateTime.Now, SubmissionDateShamsi = PersianDate.NowGetWithSlash });
             sportClubFaratechnoDBContext.SaveChanges();

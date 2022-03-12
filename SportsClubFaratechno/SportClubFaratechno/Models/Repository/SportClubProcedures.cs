@@ -131,7 +131,59 @@ namespace SportClubFaratechno.Models.Repository
 
         }
 
+        public Response GetDetailById(GetDetailByIdModel model)
+        {
 
+
+            var DetailTypeRepos = SportClubReposDI<DetailType>.OBJ;
+            var res = DetailTypeRepos.GetById(model.Id);
+
+            Response.Data = res;
+
+            return Response;
+        }
+
+        public Response UpdateDetailById(UpdateDetailByIdModel model)
+        {
+
+            var DetailTypeRepos = SportClubReposDI<DetailType>.OBJ;
+            var detail = DetailTypeRepos.GetById(model.Id);
+
+
+            detail.DetailName = string.IsNullOrEmpty(model.Name.Trim()) ? detail.DetailName : model.Name.Trim();
+            detail.Description = string.IsNullOrEmpty(model.Description.Trim()) ? detail.Description : model.Description.Trim();
+
+            DetailTypeRepos.Update(detail);
+            return Response;
+        }
+
+        #endregion
+
+
+
+        #region رشته ورزشی
+
+        public Response RemoveSport(RemoveSportModel model)
+        {
+
+            var salonSportRepos = SportClubReposDI<SalonSport>.OBJ;
+
+            if( salonSportRepos.Exists(pp => pp.SportTypeId == model.Id))
+            {
+                Response.HasError = true;
+                Response.Message = "این رشته ورزشی در حال استفاده شدن است و قابل حذف شدن نیست.";
+            }
+            else
+            {
+                var detailTypeResos= SportClubReposDI<DetailType>.OBJ;
+                detailTypeResos.RemoveById(model.Id);
+
+
+            }
+
+
+            return Response;
+        }
 
         #endregion
 
@@ -147,6 +199,30 @@ namespace SportClubFaratechno.Models.Repository
             Response.LogChanges = club.LogChanges;
             Response.Data = res;
 
+
+            return Response;
+        }
+
+        public Response RemoveClub(RemoveClubModel model)
+        {
+            var detailRepos = SportClubReposDI<DetailType>.OBJ;
+
+            
+
+            var salClubRepos = SportClubReposDI<ClubSalon>.OBJ;
+
+            if( salClubRepos.Exists(pp=> pp.ClubId == model.Id))
+            {
+                Response.Message = "این باشگاه دارای سالن است و حذف آن مقدور نمیباشد.";
+                Response.HasError = true;
+
+            }
+            else
+            {
+                detailRepos.RemoveById(model.Id);
+            }
+
+            
 
             return Response;
         }
@@ -356,9 +432,17 @@ namespace SportClubFaratechno.Models.Repository
             var cabinetRepos = SportClubReposDI<Cabinet>.OBJ;
             var freeCabs = cabinetRepos.Find(pp => pp.IsEngaged == model.IsEngaged).ToList();
 
+            var cntx = TheServiceProvider.Instance.GetService<SportClubFaratechnoDBContext>();
+            var res = from a in cntx.Cabinet
+                      join b in cntx.SalonCabinet on a.Id equals b.CabinetId
+                      where a.IsEngaged == model.IsEngaged && b.SalonId == model.salonId
+                      select a;
 
 
-            Response.Data = freeCabs;
+
+
+
+            Response.Data = res.ToList();
             return Response;
         }
 
@@ -476,7 +560,7 @@ namespace SportClubFaratechno.Models.Repository
 
             var buffetDetailRepos = SportClubReposDI<BuffetDetail>.OBJ;
 
-            var invoiceId= GetUserInvoice(model.UserId);
+            var invoiceId = GetUserInvoice(model.UserId);
             List<object> resList = new List<object>();
             foreach (var i in model.IdQuantities)
             {
@@ -488,7 +572,7 @@ namespace SportClubFaratechno.Models.Repository
 
                 var transactionRepos = SportClubReposDI<Transaction>.OBJ;
 
-                
+
                 var newTrn = new Transaction
                 {
                     IncomeSpend = true,
@@ -500,11 +584,11 @@ namespace SportClubFaratechno.Models.Repository
                     TrnSource = found.Id,
                     TrnType = 4,
                     UserId = model.UserId,
-                    InvoiceId= invoiceId
+                    InvoiceId = invoiceId
 
                 };
 
-              resList.Add(transactionRepos.Add(newTrn));
+                resList.Add(transactionRepos.Add(newTrn));
 
             }
 
@@ -598,6 +682,48 @@ namespace SportClubFaratechno.Models.Repository
         #endregion
 
         #region سالن
+
+
+        public Response UpdateSalon(UpdateSalonModel model)
+        {
+            var clubSalonRepos = SportClubReposDI<ClubSalon>.OBJ;
+
+            var detailRepos = SportClubReposDI<DetailType>.OBJ;
+
+
+            var theSalon= detailRepos.GetById(model.SalonId);
+
+            theSalon.DetailName = string.IsNullOrEmpty(model.SalonName.Trim()) ? theSalon.DetailName : model.SalonName;
+            theSalon.Description = string.IsNullOrEmpty(model.SalonDescription.Trim()) ? theSalon.Description : model.SalonDescription;
+
+            detailRepos.Update(theSalon);
+
+            var theSalonClub= clubSalonRepos.Find(pp=> pp.SalonId==model.SalonId).FirstOrDefault();
+
+
+            theSalonClub.ClubId = model.ClubId;
+
+            clubSalonRepos.Update(theSalonClub);
+
+            return Response;
+        }
+
+        public Response GetSalonDetails(GetSalonDetailsModel model)
+        {
+            
+
+
+            var cntx = TheServiceProvider.Instance.GetService<SportClubFaratechnoDBContext>();
+
+            var res = (from a in cntx.DetailType
+                      join b in cntx.ClubSalon on a.Id equals b.SalonId
+                      where a.Id == model.SalonId
+                      select new {SalonName= a.DetailName , SalonDescription=a.Description , ClubId=b.ClubId }).FirstOrDefault();
+
+            Response.Data = res;
+            return Response;
+        }
+
         internal Response AssignSportToSalon(AssignSportToSalonModel model)
         {
             var detailTypeRepos = SportClubReposDI<DetailType>.OBJ;
@@ -840,23 +966,25 @@ namespace SportClubFaratechno.Models.Repository
 
             //if()
 
-            sessionRepos.Add(new Session { SalonSportId = model.SalonSportId, 
-                StartDate = PersianDate.ConvertToGregorian(model.StartDateShamsi), 
-                EndDate = PersianDate.ConvertToGregorian(model.EndDateShamsi), 
-                Description = model.Description, 
-                EndDateShamsi = model.EndDateShamsi, 
-                StartDateShamsi = model.StartDateShamsi, 
-                StartTime = model.StartTime, 
-                EndTime = model.EndTime, 
-                Sex = model.Sex, 
-                NumberOfPeople = model.NumberOfPeople, 
-                State = res.Id, 
-                NumberOfSessions = model.NumberOfSessions, 
-                AtAprice = model.AtAprice, 
-                TotalPrice = model.TotalPrice, 
-                SubmissionDate = DateTime.Now, 
+            sessionRepos.Add(new Session
+            {
+                SalonSportId = model.SalonSportId,
+                StartDate = PersianDate.ConvertToGregorian(model.StartDateShamsi),
+                EndDate = PersianDate.ConvertToGregorian(model.EndDateShamsi),
+                Description = model.Description,
+                EndDateShamsi = model.EndDateShamsi,
+                StartDateShamsi = model.StartDateShamsi,
+                StartTime = model.StartTime,
+                EndTime = model.EndTime,
+                Sex = model.Sex,
+                NumberOfPeople = model.NumberOfPeople,
+                State = res.Id,
+                NumberOfSessions = model.NumberOfSessions,
+                AtAprice = model.AtAprice,
+                TotalPrice = model.TotalPrice,
+                SubmissionDate = DateTime.Now,
                 SubmissionDateShamsi = PersianDate.NowGetWithSlash,
-            SessionTypeId= model.SessionTypeId
+                SessionTypeId = model.SessionTypeId
             });
 
             Response.LogChanges = sessionRepos.LogChanges;
@@ -903,8 +1031,22 @@ namespace SportClubFaratechno.Models.Repository
 
             var sessionRepos = SportClubReposDI<Session>.OBJ;
 
+
+
+
             var res = sessionRepos.Find(pp => pp.SalonSportId == model.SalonSportId).ToList();
-            Response.Data = res;
+
+            var dbContext = TheServiceProvider.Instance.GetService<SportClubFaratechnoDBContext>();
+
+            var theRes = (from a in dbContext.Session
+                          join b in dbContext.DetailType on a.Sex equals b.Id
+                          join c in dbContext.DetailType on a.SessionTypeId equals c.Id
+                          where a.SalonSportId == model.SalonSportId
+                          select new { Session = a, Sex = b.DetailName, SessionType = c.DetailName }).ToList();
+
+
+
+            Response.Data = theRes;
             return Response;
         }
 
@@ -1031,8 +1173,24 @@ namespace SportClubFaratechno.Models.Repository
                       join d in dbContext.SalonSport on c.SalonSportId equals d.Id
                       join e in dbContext.DetailType on d.SalonTypeId equals e.Id
                       join f in dbContext.DetailType on d.SportTypeId equals f.Id
+                      join g in dbContext.DetailType on c.SessionTypeId equals g.Id
+                      join h in dbContext.DetailType on c.Sex equals h.Id
                       where a.UserId == model.UserId
-                      select new { salonName = e.DetailName, sportName = f.DetailName, c.StartDateShamsi, c.EndDateShamsi, c.StartTime, c.EndTime, c.NumberOfSessions, UserId = b.Id, SessionUserId = a.Id };
+                      select new
+                      {
+                          salonName = e.DetailName,
+                          sportName = f.DetailName,
+                          c.StartDateShamsi,
+                          c.EndDateShamsi,
+                          c.StartTime,
+                          c.EndTime,
+                          c.NumberOfSessions,
+                          UserId = b.Id,
+                          SessionUserId = a.Id,
+                          SessionType = g.DetailName,
+                          Sex = h.DetailName,
+                          SalonId = d.SalonTypeId
+                      };
             Response.Data = res.ToList();
             return Response;
         }
@@ -1140,11 +1298,26 @@ namespace SportClubFaratechno.Models.Repository
             var sessionUserTrafficRepos = SportClubReposDI<SessionUserTraffic>.OBJ;
 
             var res = sessionUserTrafficRepos.Find(pp => pp.SessionUserId == model.SessionUserId).ToList();
-            Response.Data = res;
+
+            var resCount = res.Count();
+
+            var resSessionUserRepos = SportClubReposDI<SessionUser>.OBJ;
+            var resSessionUser = resSessionUserRepos.GetById(model.SessionUserId);
+
+            var resSessionRepos = SportClubReposDI<Session>.OBJ;
+            var session = resSessionRepos.GetById(resSessionUser.SessionId);
+
+
+            //var rres = res.Select(pp => pp.ExitDatetime.Value.ToShortTimeString()).ToList();
+
+            Response.Data = new { res = res, resCount = resCount, remainCount = session.NumberOfSessions - resCount };
 
 
             return Response;
         }
+
+
+
 
         public Response ExitSessionUserTraffic(ExitSessionUserTrafficModel model)
         {

@@ -1,0 +1,150 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "هنرجو";
+    Layout = "~/Views/Shared/VueUserLayout.cshtml";
+
+}
+@using SportClubFaratechno.Models.ViewModels;
+@model LoginResponse
+
+
+<v-data-table :headers="userSessionTblHeader"
+              :items="userSessionTblSource"
+              :items-per-page="5"
+              class="elevation-1">
+    <template v-slot:body="{items}">
+        <tbody>
+            <tr v-for="item in items" :key="item.id" style="text-align:right"
+                @@click="SelectedSessionUserId=item.sessionUserId;SelectedSalonId=item.salonId;GetUserTraffic();" onclick="highliteTR(this)">
+                <td>{{ item.salonName }}</td>
+                <td>{{ item.sportName }}</td>
+                <td>{{ item.startDateShamsi }}</td>
+                <td>{{ item.endDateShamsi }}</td>
+                <td>{{ item.startTime }}</td>
+                <td>{{ item.endTime }}</td>
+                <td>{{ item.numberOfSessions }}</td>
+                <td>{{item.sessionType}}</td>
+                <td>{{item.sex}}</td>
+
+                <td>
+                    @*<v-btn @@click="ShowTrafficDetail=true;showUserEntranceDialog=true;SelectedSessionUserId=item.sessionUserId;  GetFreeCabinets()">ورود</v-btn>
+                        <v-btn @@click="SelectedSessionUserId=item.sessionUserId;SessionUserExerProgDialogShow=true;">برنامه ورزشی</v-btn>*@
+
+
+                </td>
+
+
+
+            </tr>
+        </tbody>
+    </template>
+
+</v-data-table>
+
+<div v-show="ShowTrafficDetail">
+    <h2>ترافیک کاربر </h2>
+    <v-data-table :headers="userTrafficHeader"
+                  :items="userTrafficTblSource"
+                  :items-per-page="5"
+                  class="elevation-1">
+        <template v-slot:body="{items}">
+            <tbody>
+                <tr v-for="item in items" :key="item.id" style="text-align:right" onclick="highliteTR(this)">
+                    <td>{{ GetTimeOfDate(item.entranceDatetime)}}</td>
+                    <td>{{ item.entranceDatetimeShamsi }}</td>
+                    <td>{{ GetTimeOfDate(item.exitDatetime) }}</td>
+                    <td>{{ item.exitDatetimeShamsi }}</td>
+
+
+
+
+
+                </tr>
+            </tbody>
+        </template>
+
+    </v-data-table>
+    جلسات حضور: <span>{{UserSessionCount}}</span> جلسات باقیمانده: <span>{{UserSessionRemainCount}}</span>
+</div>
+
+
+
+@section VueComponents{
+    <script>
+        var myMixin = {
+            data: {
+                dialog: false,
+                userSessionTblHeader: [
+                    { text: "نام سالن", value: "salonName" },
+                    { text: "نام ورزش", value: "sportName" },
+                    { text: "تاریخ شروع", value: "startDateShamsi" },
+                    { text: "تاریخ پایان", value: "endDateShamsi" },
+                    { text: "ساعت شروع", value: "startTime" },
+                    { text: "ساعت پایان", value: "endTime" },
+                    { text: "تعداد جلسات", value: "numberOfSessions" },
+                    { text: "نوع جلسه", value: "SessionType" },
+                    { text: "جنسیت", value: "Sex" }
+                ],
+                userSessionTblSource: [],
+                SelectedSessionUserId:0,
+                SelectedSalonId: 0,
+                ShowTrafficDetail: true,
+                userTrafficHeader: [
+                    { text: "ساعت ورود", value: "entranceDatetime" },
+                    { text: "تاریخ ورود", value: "entranceDatetimeShamsi" },
+                    { text: "ساعت خروج", value: "exitDatetime" },
+                    { text: "تاریخ خروج", value: "exitDatetimeShamsi" },
+
+                ],
+                userTrafficTblSource: [],
+                UserSessionCount: 0,
+                UserSessionRemainCount:0,
+
+
+
+            },
+            methods: {
+                GetUserSessions: async function () {
+
+                    let model = {
+                        Model: {
+                            userId: @Model.UserId
+                        },
+                        Address: "/api/Session/GetListOfSessionUsersByUserId"
+                        // this is commemt
+
+                    };
+
+                    let vv = await CallApi(model);
+                    this.userSessionTblSource = vv.data;
+
+                },
+                GetUserTraffic: async function () {
+                    this.SelectedSessionUserId;
+
+                    let model = {
+                        Model: {
+                            sessionUserId: this.SelectedSessionUserId
+                        },
+                        Address: "/api/Session/GetUserTraffic"
+                    };
+                    let vv = await CallApi(model);
+                    this.userTrafficTblSource = vv.data.res;
+                    this.UserSessionCount = vv.data.resCount;
+                    this.UserSessionRemainCount = vv.data.remainCount;
+                    
+
+                }
+
+            },
+            created:async function () {
+                await this.GetUserSessions();
+            }
+        };
+
+
+    </script>
+}
+

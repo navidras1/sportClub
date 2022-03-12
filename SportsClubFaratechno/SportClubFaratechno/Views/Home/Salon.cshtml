@@ -26,8 +26,11 @@
                         <td>{{ item.description }}</td>
                         <td>{{ item.submissionDateShamsi }}</td>
                         <td>
-                            <v-btn class="mx-2" fab dark small color="pink" @@click="onButtonClick(item.id)">
-                                <v-icon dark>mdi-heart</v-icon>
+                            <v-btn @@click="selectedItem = item.id;EditSalon()">
+                                ویرایش
+                            </v-btn>
+                            <v-btn @@click="selectedItem = item.id; removeSalon()">
+                                حذف
                             </v-btn>
                         </td>
                     </tr>
@@ -71,7 +74,7 @@
     <template>
         <h2>دوره</h2>
         <v-btn @@click="dialogSession=true;GetListOfSessionTypes();">انتساب دوره به {{assignSportBtnLabel}} {{selectedSportName}}</v-btn>
-
+        <br />
 
         <template>
             <v-row justify="center">
@@ -183,21 +186,21 @@
                       :items="sessionTblSource"
                       :items-per-page="5"
                       item-key="table_header_index"
-                      class="elevation-1">
+                      @*class="elevation-1"*@
+                      >
 
             <template v-slot:body="{items}">
                 <tbody>
-                    <tr v-for="item in items" :key="item.id" style="text-align:right" onclick="highliteTR(this)" @@click="selectedSessionId=item.id;SessionSelected() ">
-                        <td>{{ item.numberOfSessions }}</td>
-                        <td>{{ item.startDateShamsi }}</td>
-                        <td>{{ item.startDateShamsi }}</td>
-                        <td>{{ item.endDateShamsi }}</td>
-                        <td>{{ item.numberOfPeople }}</td>
+                    <tr v-for="item in items" :key="item.id" style="text-align:right" onclick="highliteTR(this)" @@click="selectedSessionId=item.session.id;SessionSelected() ">
+                        <td>{{ item.session.numberOfSessions }}</td>
+                        <td>{{ item.session.startDateShamsi }}</td>
+                        <td>{{ item.session.endDateShamsi }}</td>
+                        <td>{{ item.session.numberOfPeople }}</td>
                         <td>{{ item.sex }}</td>
-                        <td>{{ item.startTime }}</td>
-                        <td>{{ item.endTime }}</td>
-                        <td>{{ item.totalPrice }}</td>
-                        <td>{{ item.numberOfPeople }}</td>
+                        <td>{{ item.session.startTime }}</td>
+                        <td>{{ item.session.endTime }}</td>
+                        <td>{{ item.session.totalPrice }}</td>
+                        <td>{{ item.sessionType}}</td>
 
 
 
@@ -229,7 +232,7 @@
                 lazy-validation>
             <v-card>
                 <v-card-title>
-                    <span class="text-h5">ثبت سالن</span>
+                    <span class="text-h5">{{RegSalonBtnTxt}} سالن</span>
                 </v-card-title>
                 <v-card-text>
                     <v-container>
@@ -273,7 +276,7 @@
                     <v-btn color="green darken-1"
                            text
                            @@click="createSalon(clubSelect ,salonName)">
-                        ثبت
+                        {{RegSalonBtnTxt}}
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -441,6 +444,9 @@
 
         var myMixin = {
             data: {
+
+                RegSalonBtnTxt: "ثبت",
+                isSalonEdit: false,
                 menu: false,
                 activePicker: null,
                 date: '2018-03-02',
@@ -494,7 +500,6 @@
                 sportSelect: {},
                 selectedItem: 1,
                 selectedSportName: "",
-
                 sessionTblHeader: [
                     { text: "تعداد جلسات", value: "numberOfSessions" },
                     { text: "تاریخ شروع", value: "startDateShamsi" },
@@ -504,7 +509,7 @@
                     { text: "ساعت شروع", value: "startTime" },
                     { text: "ساعت پایان", value: "endTime" },
                     { text: "هزینه دوره", value: "totalPrice" },
-                    { text: "تعداد نفرات", value: "numberOfPeople" },
+                    { text: "نوع جلسه", value: "sessionType" },
 
                 ],
                 sessionTblSource: [],
@@ -575,6 +580,39 @@
             },
             methods: {
 
+                EditSalon:async function () {
+
+                    let model = {
+                        Model: {
+                            salonId: this.selectedItem
+                        },
+                        Address: "/api/Salon/GetSalonDetails"
+
+
+                    };
+
+                    this.isSalonEdit = true;
+                    this.RegSalonBtnTxt = "ویرایش";
+
+
+                    var vv = await CallApi(model);
+
+
+
+                    await this.GetClubList();
+
+                    this.clubSelect = vv.data.clubId;
+                    this.salonName = vv.data.salonName;
+                    this.salonDescription = vv.data.salonDescription;
+
+
+
+
+
+
+
+                },
+
 
                 SessionTypeDDListChanged: function () {
 
@@ -630,6 +668,9 @@
                 },
                 createSalon: async function (club, salon) {
 
+
+
+
                     if (salon == undefined || salon.trim() == "") {
                         this.showSnack("نام باشگاه الزامی است");
                         return;
@@ -642,8 +683,40 @@
                         theClubId = club;
                     }
 
+                    let model = {};
+                    let vv = {};
 
-                    let model = {
+                    if (this.isSalonEdit == true) {
+
+                        this.RegSalonBtnTxt = "ثبت";
+                        this.isSalonEdit = false;
+                        model = {
+
+                            Model: {
+                                salonId: this.selectedItem,
+                                salonName: this.salonName,
+                                salonDescription: this.salonDescription,
+                                clubId: this.clubSelect
+                            },
+                            Address:"/api/Salon/UpdateSalon"
+                        };
+
+                        let ss = await CallApi(model);
+                        
+
+                        if (ss.hasError == false) {
+
+                            this.showSnack(ss.message);
+                            this.dialogSalon = false;
+                            await this.getListOfSalons();
+                        }
+
+                        return;
+
+                    }
+
+
+                    model = {
                         Model: {
                             detailName: salon,
                             description: this.salonDescription
@@ -651,7 +724,7 @@
                         Address: "/api/Definitions/CreateDetailSalon"
 
                     };
-                    let vv = {};
+                    
                     vv = await CallApi(model);
                     if (vv.hasError) {
 
@@ -689,8 +762,18 @@
                     this.dialogSalon = false;
                     this.resetForm();
 
-                }
-                ,
+                },
+
+                getListOfSalons:async function () {
+                    model = { Model: null, Address: "/api/Definitions/GetSalonList" };
+
+
+                    vv = await CallApi(model);
+                    this.tblSource = vv.data;
+                    this.dialogSalon = false;
+                    this.resetForm();
+                },
+
                 clicked: async function (item) {
                     //row.select(true);
                     //item.name - selected id
@@ -917,25 +1000,7 @@
         GetSalonList();
 
 
-        function highliteTR(tr) {
-
-            let theRows = tr.parentNode.rows;
-            //alert(theRows.length);
-
-            for (let i = 0; i < theRows.length; i++) {
-                let ss = theRows[i];
-                ss.classList.remove("bg-info");
-
-            }
-            tr.classList.add("bg-info");
-
-            //theRows.forEach(function (item, index) {
-
-            //    alert(index);
-            //});
-
-
-        }
+        
     </script>
 
 }

@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
-
+@using Microsoft.AspNetCore.Http;
+@using SportClubFaratechno.Models.ViewModels;
 <html>
 <head>
     <meta charset="utf-8" />
@@ -40,10 +41,16 @@
 </head>
 <body>
 
+
+    @{
+        //var resLogin = Session.GetObject<LoginResponse>("Auth");
+        //session
+        var resLogin = Context.Session.GetObject<LoginResponse>("Auth");
+        var a = 2;
+    }
     <div id="mainVueApp" style="text-align:right; direction:rtl">
 
         <v-app>
-
 
             <v-navigation-drawer right app>
 
@@ -66,24 +73,24 @@
                                 </template>
 
                                 @*<v-list-group :value="true"
-                                              no-action
-                                              sub-group>
-                                    <template v-slot:activator>
-                                        <v-list-item-content>
-                                            <v-list-item-title>Admin</v-list-item-title>
-                                        </v-list-item-content>
-                                    </template>
+                                                  no-action
+                                                  sub-group>
+                                        <template v-slot:activator>
+                                            <v-list-item-content>
+                                                <v-list-item-title>Admin</v-list-item-title>
+                                            </v-list-item-content>
+                                        </template>
 
-                                    <v-list-item v-for="([title, icon], i) in admins"
-                                                 :key="i"
-                                                 link>
-                                        <v-list-item-title v-text="title"></v-list-item-title>
+                                        <v-list-item v-for="([title, icon], i) in admins"
+                                                     :key="i"
+                                                     link>
+                                            <v-list-item-title v-text="title"></v-list-item-title>
 
-                                        <v-list-item-icon>
-                                            <v-icon v-text="icon"></v-icon>
-                                        </v-list-item-icon>
-                                    </v-list-item>
-                                </v-list-group>*@
+                                            <v-list-item-icon>
+                                                <v-icon v-text="icon"></v-icon>
+                                            </v-list-item-icon>
+                                        </v-list-item>
+                                    </v-list-group>*@
 
                                 <v-list-group no-action
                                               :value="true"
@@ -117,13 +124,8 @@
 
             </v-navigation-drawer>
 
-            <v-app-bar app
-                       color="deep-purple accent-4">
-
-
-
-
-                <v-tooltip v-model="show"
+            <v-app-bar app>
+                <v-tooltip @*v-model="show"*@
                            bottom>
                     <template v-slot:activator="{ on, attrs }">
                         <v-btn icon
@@ -139,11 +141,8 @@
                     <span>خروج</span>
                 </v-tooltip>
 
-
-                <v-spacer></v-spacer>
-
-
-
+                <span>نام کاربری:</span>
+                <span>{{theUserName}} </span>
             </v-app-bar>
 
             <!-- Sizes your content based upon application components -->
@@ -165,20 +164,7 @@
 
         </v-app>
 
-        <v-snackbar v-model="snackAlert"
-                    :timeout="snackAlertTimeout"
-                    color="blue-grey">
-            {{ snackAlertMessage }}
 
-            @*<template v-slot:action="{ attrs }">
-                <v-btn color="red"
-                       text
-                       v-bind="attrs"
-                       @@click="snackbar = false">
-                    Close
-                </v-btn>
-            </template>*@
-        </v-snackbar>
 
     </div>
     @RenderSection("VueComponents", required: false)
@@ -197,27 +183,19 @@
             }),
             mixins: [myMixin],
             data: {
-                snackAlert: true,
-                snackAlertTimeout: 3000,
-                snackAlertMessage:"",
-                
                 date: '1397/02/02',
-                collapseOnScroll: true,
+
+                theUserName: "@resLogin.UserName" ,
+
                 datasource: {},
                 admins: [
                     ['Management', 'mdi-account-multiple-outline'],
                     ['Settings', 'mdi-cog-outline'],
                 ],
                 cruds: [
-                    ['باشگاه', 'mdi-home-modern', "/Home/Index"],
-                    ['سالن', 'mdi-home-map-marker', "/Home/salon"],
-                    ['رشته های ورزشی', 'mdi-dumbbell', "/Home/Sports"],
-                    //['تنظیمات بوفه', 'mdi-settings', "/Home/Buffet"],
-                    //['بوفه', 'mdi-hamburger', "/Home/BuffetShop"],
-                    ['کاربران', 'mdi-account', "/Home/Users"],
-                    ['نقش', 'mdi-account-circle', "/Home/Roles"],
-                    ['کمد', 'mdi-key', "/Home/Cabinet"],
-                    ['تراکنش', 'mdi-coin', '/Home/Transactions']
+                    ['جلسات', 'mdi-home-modern', "/User/Index"],
+                    //['تراکنش ها', 'mdi-home-map-marker', "/User/Transactions"],
+
 
                 ],
                 nameRules: [
@@ -228,11 +206,6 @@
             },
 
             methods: {
-                showSnackAlert: function (snackbarMessage) {
-                    this.snackAlert = true;
-                    this.snackAlertMessage = snackbarMessage;
-                },
-
                 theEvent: function (param) {
                     //alert(param);
                     window.location.href = param;
@@ -279,7 +252,6 @@
         function highliteTR(tr) {
 
             let theRows = tr.parentNode.rows;
-            //alert(theRows.length);
 
             for (let i = 0; i < theRows.length; i++) {
                 let ss = theRows[i];
@@ -287,15 +259,8 @@
 
             }
             tr.classList.add("bg-info");
-
-            //theRows.forEach(function (item, index) {
-
-            //    alert(index);
-            //});
-
-
         }
-                                    //mainVueApp.bar();
+                                //mainVueApp.bar();
     </script>
 
     @RenderSection("Scripts", required: false)

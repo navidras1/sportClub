@@ -21,6 +21,24 @@
                       :items="tblSource"
                       :items-per-page="5"
                       class="elevation-1">
+            <template v-slot:body="{ items }">
+                <tbody>
+                    <tr v-for="item in items" :key="item.id" :active="selectedItem == item.id" style="text-align:right" onclick="highliteTR(this)">
+                        <td>{{ item.detailName }}</td>
+
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.submissionDateShamsi }}</td>
+                        <td>
+                            <v-btn @@click="selectedItem = item.id;onButtonClick()">
+                                ویرایش
+                            </v-btn>
+                            <v-btn  @@click="selectedItem = item.id; removeClub()">
+                                حذف
+                            </v-btn>
+                        </td>
+                    </tr>
+                </tbody>
+            </template>
 
         </v-data-table>
     </template>
@@ -55,8 +73,7 @@
                                     <v-text-field label="توضیحات"
                                                   v-model="ClubDescription"
                                                   required
-                                                  @@keydown.enter="createClub()"
-                                                  ></v-text-field>
+                                                  @@keydown.enter="createClub()"></v-text-field>
                                 </v-col>
 
 
@@ -68,15 +85,17 @@
                         <v-spacer></v-spacer>
                         <v-btn color="red darken-1"
                                text
-                               @@click="dialog = false;resetForm();">
+                               @@click="dialog = false;clubEditMode = false;regbtnTxt = 'ثبت';resetForm();">
                             انصراف
                         </v-btn>
                         <v-btn color="green darken-1"
                                text
                                @@click="createClub()">
-                            ثبت
+                            {{regbtnTxt}}
                         </v-btn>
                     </v-card-actions>
+
+
 
                 </v-card>
             </v-form>
@@ -85,8 +104,7 @@
 
         <v-dialog v-model="dialogSalon"
                   persistent
-                  max-width="600px" 
-                  
+                  max-width="600px"
                   content-class="my-custom-dialog">
             <form>
                 <v-card>
@@ -104,15 +122,13 @@
                                                   v-model="salonName"
                                                   @@keydown.enter="focusNext"
                                                   :rules="nameRules"
-                                                  autofocus
-                                                  ></v-text-field>
+                                                  autofocus></v-text-field>
                                 </v-col>
                                 <v-col cols="12">
                                     <v-text-field label="توضیحات"
                                                   requiredhint="نام سالن را وارد کنید"
                                                   v-model="salonDescription"
-                                                  @@keydown.enter="createSalon"
-                                                  ></v-text-field>
+                                                  @@keydown.enter="createSalon"></v-text-field>
                                 </v-col>
 
 
@@ -166,7 +182,8 @@
     <script>
         var myMixin = {
             data: {
-                dialog: false
+                dialog: false,
+
             }
         };
     </script>
@@ -249,25 +266,66 @@
 
                 testShow: true,
                 ClubDescription: "",
-                salonDescription:""
+                salonDescription: "",
+                selectedItem: 0,
+                regbtnTxt: "ثبت",
+                clubEditMode:false
 
 
             },
             methods: {
-                createClub: async function () {
+
+                onButtonClick: async function () {
+                    //alert(val);
                     let model = {
                         Model: {
-                            detailName: this.clubName,
-                            description: this.ClubDescription
+                            id: this.selectedItem
                         },
-                        Address: "/api/Definitions/CreateClub"
+                        Address: "/api/Definitions/GetDetailById"
+
 
                     };
+                    var vv = await CallApi(model);
+
+                    this.clubName = vv.data.detailName;
+                    this.ClubDescription = vv.data.description;
+                    this.dialog = true;
+                    this.regbtnTxt = "ویرایش";
+                    this.clubEditMode = true;
+                    
+                },
+
+                createClub: async function () {
+                    let model = {};
+
+                    if (this.clubEditMode == true) {
+                        model = {
+                            Model: {
+                                id: this.selectedItem,
+                                name: this.clubName,
+                                description: this.ClubDescription
+                            },
+                            Address: "/api/Definitions/UpdateDetailById"
+
+                        };
+                        
+                    }
+                    else{
+                        model = {
+                            Model: {
+                                detailName: this.clubName,
+                                description: this.ClubDescription
+                            },
+                            Address: "/api/Definitions/CreateClub"
+
+                        };
+                    }
 
                     let vv = {};
 
-                    await axios.post("/General/CallApi", model).then(response => vv = response.data).catch(err => console.log(err));
+                    vv=await axios.post("/General/CallApi", model).then(response => vv = response.data).catch(err => console.log(err));
 
+                    
                     if (vv.hasError == true) {
 
 
@@ -278,6 +336,14 @@
                     }
                     else {
 
+                        if (this.clubEditMode == true) {
+                            this.dialog = false;
+                            this.getClubList();
+                            this.clubEditMode = false;
+                            this.regbtnTxt = "ثبت";
+                            return;
+                        }
+
 
                         if (this.showSalonDialog == false) {
                             this.dialog = false;
@@ -287,9 +353,9 @@
 
 
 
-                        
+
                         clubId = vv.data.id;
-                        
+
                         let clubModel = {
                             Model: {
                                 ClubId: clubId,
@@ -305,7 +371,7 @@
                         this.dialogSalon = true;
                     }
 
-
+                    this.getClubList();
 
 
                 },
@@ -362,12 +428,25 @@
                 },
                 test: function () {
                     alert(window.location.href);
+                },
+                removeClub:async function () {
+                    let model = {
+                        Model: {
+                            id: this.selectedItem
+                        },
+                        Address:"/api/Club/RemoveClub"
+                    };
+                    let vv =await CallApi(model);
+                    if (vv.hasError == false) {
+                        await this.getClubList();
+                    }
+                    this.showSnackAlert(vv.message);
                 }
             }
 
             ,
             created: function () {
-               this. getClubList();
+                this.getClubList();
             }
 
         };
@@ -387,7 +466,7 @@
         }
         RegisterClub();
 
-        
+
 
 
     </script>

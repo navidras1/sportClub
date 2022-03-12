@@ -23,13 +23,10 @@ namespace SportClubFaratechno
             //CreateHostBuilder(args).Build().Run();
 #if sqlite
             CreateHostBuilder(args).Build().Start();
-            //OpenBrowser("http://localhost:449/");
+            OpenBrowser("http://localhost:449/");
 #else
             CreateHostBuilder(args).Build().Run();
 #endif
-
-
-
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

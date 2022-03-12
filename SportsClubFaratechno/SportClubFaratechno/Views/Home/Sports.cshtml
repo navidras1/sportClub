@@ -14,6 +14,25 @@
                       :items-per-page="5"
                       class="elevation-1">
 
+            <template v-slot:body="{ items }">
+                <tbody>
+                    <tr v-for="item in items" :key="item.id" :active="selectedItem == item.id" style="text-align:right" onclick="highliteTR(this)">
+                        <td>{{ item.detailName }}</td>
+
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.submissionDateShamsi }}</td>
+                        <td>
+                            <v-btn @@click="selectedItem = item.id;OnSportEditBtnClicked();">
+                                ویرایش
+                            </v-btn>
+                            <v-btn @@click="selectedItem = item.id; OnRemoveSportClicked();">
+                                حذف
+                            </v-btn>
+                        </td>
+                    </tr>
+                </tbody>
+            </template>
+
         </v-data-table>
 
         <v-dialog v-model="dialogSport"
@@ -64,7 +83,7 @@
                         <v-btn color="green darken-1"
                                text
                                @@click="createSport()">
-                            ثبت
+                            {{regText}}
                         </v-btn>
                     </v-card-actions>
                 </v-card>
@@ -100,6 +119,11 @@
             },
 
             data: {
+                selectedItem:0,
+
+                isSportEdit:false,
+
+                regText:"ثبت",
                 snackbar: false,
                 snackbarMessage: "",
 
@@ -127,6 +151,46 @@
 
             },
             methods: {
+                OnRemoveSportClicked: async function () {
+
+                    let model = {
+
+                        Model: {
+                            id: this.selectedItem
+                        },
+                        Address:"/api/Sport/RemoveSport"
+                    };
+
+                    var vv = await CallApi(model);
+                    if (vv.hasError) {
+                        this.showSnack(vv.message);
+
+                    }
+                    else {
+                        this.GetSportList();
+                    }
+                },
+
+                OnSportEditBtnClicked:async function () {
+                   // alert(this.selectedItem);
+
+                    let model = {
+                        Model: {
+                            id: this.selectedItem
+                        },
+                        Address: "/api/Definitions/GetDetailById"
+
+
+                    };
+                    var vv = await CallApi(model);
+
+                    this.sportName = vv.data.detailName;
+                    this.description = vv.data.description;
+                    this.regText = "ویرایش";
+                    this.isSportEdit = true;
+                    this.dialogSport = true;
+
+                },
                 showSnack: function (snackbarMessage) {
                     this.snackbar = true;
                     this.snackbarMessage = snackbarMessage;
@@ -143,19 +207,39 @@
                 createSport: async function () {
 
 
+
+
+
                     if (this.sportName == undefined || this.sportName.trim() == "") {
                         this.showSnack("نام رشته ورزشی الزامی است");
                         return;
                     }
 
-                    let model = {
-                        Model: {
-                            detailName: this.sportName,
-                            description: this.description
-                        },
-                        Address: "/api/Definitions/CreateDetailSports"
+                    let model = {};
 
-                    };
+                    if (this.isSportEdit == true) {
+                        model = {
+                            Model: {
+                                id: this.selectedItem,
+                                name: this.sportName,
+                                description: this.description
+                            },
+                            Address: "/api/Definitions/UpdateDetailById"
+
+                        };
+                        this.isSportEdit = false;
+                        this.regText="ثبت"
+                    }
+                    else {
+                        model = {
+                            Model: {
+                                detailName: this.sportName,
+                                description: this.description
+                            },
+                            Address: "/api/Definitions/CreateDetailSports"
+
+                        };
+                    }
 
                     let vv = {};
                     vv = await CallApi(model);

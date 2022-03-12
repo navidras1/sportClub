@@ -5,8 +5,13 @@ using SportClubFaratechno.Models.SportClubFaratechnoDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
-
+using System.Web.Http.Description;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Web.Http;
+//using System.Web.Http.Description;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace SportClubFaratechno.WebApi
@@ -326,12 +331,66 @@ namespace SportClubFaratechno.WebApi
             return Ok(res);
         }
 
+        [HttpPost("ListOfWebApis")]
+        public IActionResult ListOfWebApis()
+        {
+            //IApiExplorer ex = this.Configuration.Services.GetApiExplorer();
+            
+
+            //// loop, convert and return all descriptions 
+            //var res = ex.ApiDescriptions
+            //    // ignore self
+                //.Where(d => d.ActionDescriptor.ControllerDescriptor.ControllerName != "ApiMethod")
+                //.Select(d =>
+                //{
+                //    // convert to a serializable structure
+                //    return new HelpMethod
+                //    {
+                //        Parameters = d.ParameterDescriptions.Select(p => new HelpParameter
+                //        {
+                //            Name = p.Name,
+                //            Type = p.ParameterDescriptor.ParameterType.FullName,
+                //            IsOptional = p.ParameterDescriptor.IsOptional
+                //        }).ToArray(),
+                //        Method = d.HttpMethod.ToString(),
+                //        RelativePath = d.RelativePath,
+                //        ReturnType = d.ResponseDescription.DeclaredType == null ?
+                //            null : d.ResponseDescription.DeclaredType.ToString()
+                //    };
+                //});
+            return Ok();
+        }
+
+        [HttpPost("GetDetailById")]
+        public IActionResult GetDetailById(GetDetailByIdModel model)
+        {
+            var res = SCP.GetDetailById(model);
+            return Ok(res);
+        }
+
+
+        [HttpPost("UpdateDetailById")]
+        public IActionResult UpdateDetailById(UpdateDetailByIdModel model)
+        {
+            var res = SCP.UpdateDetailById(model);
+            return Ok(res);
+        }
 
 
 
+    }
+    public class HelpMethod
+    {
+        public string Method { get; set; }
+        public string RelativePath { get; set; }
+        public string ReturnType { get; set; }
+        public IEnumerable<HelpParameter> Parameters { get; set; }
+    }
 
-
-
-
+    public class HelpParameter
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public bool IsOptional { get; set; }
     }
 }

@@ -45,7 +45,7 @@
               class="elevation-1">
     <template v-slot:body="{items}">
         <tbody>
-            <tr v-for="item in items" :key="item.id" style="text-align:right" @@click="ShowTrafficDetail=true;SelectedSessionUserId=item.sessionUserId;GetUserTraffic();" onclick="highliteTR(this)">
+            <tr v-for="item in items" :key="item.id" style="text-align:right" @@click="ShowTrafficDetail=true;SelectedSessionUserId=item.sessionUserId;SelectedSalonId=item.salonId;GetUserTraffic();" onclick="highliteTR(this)">
                 <td>{{ item.salonName }}</td>
                 <td>{{ item.sportName }}</td>
                 <td>{{ item.startDateShamsi }}</td>
@@ -77,9 +77,9 @@
         <template v-slot:body="{items}">
             <tbody>
                 <tr v-for="item in items" :key="item.id" style="text-align:right" onclick="highliteTR(this)">
-                    <td>{{ item.entranceDatetime }}</td>
+                    <td>{{ GetTimeOfDate(item.entranceDatetime) }}</td>
                     <td>{{ item.entranceDatetimeShamsi }}</td>
-                    <td>{{ item.exitDatetime }}</td>
+                    <td>{{ GetTimeOfDate(item.exitDatetime) }}</td>
                     <td>{{ item.exitDatetimeShamsi }}</td>
 
                     <td><v-btn v-if="item.exitDatetime==null" @@click="UserTrafficId=item.id;UserExit()">خروج</v-btn></td>
@@ -91,6 +91,7 @@
         </template>
 
     </v-data-table>
+    جلسات حضور: <span>{{UserSessionCount}}</span> جلسات باقیمانده: <span>{{UserSessionRemainCount}}</span>
 </div>
 
 <v-btn @@click="ShowInsuranceDialog"> ثبت بیمه کاربر </v-btn>
@@ -301,11 +302,8 @@
                     { text: "ساعت شروع", value: "startTime" },
                     { text: "ساعت پایان", value: "endTime" },
                     { text: "تعداد جلسات", value: "numberOfSessions" },
-
-
-
-
-
+                    { text:"نوع جلسه", value:"SessionType"},
+                    { text: "جنسیت", value:"Sex"}
                 ],
                 userSessionTblSource: [],
                 showUserEntranceDialog: false,
@@ -328,6 +326,9 @@
                 userTrafficTblSource: [],
                 SessionUserExerProgDialogShow: false,
                 SessionUserProgram: "",
+                SelectedSalonId: 0,
+                UserSessionCount: 0,
+                UserSessionRemainCount: 0,
             },
             methods: {
 
@@ -408,7 +409,9 @@
                 GetFreeCabinets: async function () {
                     let model = {
                         Model: {
-                            isEngaged: false
+                            isEngaged: false,
+                            salonId: this.SelectedSalonId
+
                         },
                         Address: "/api/Cabinet/GetCabinetsWithSatuts"
                     };
@@ -476,7 +479,10 @@
                         Address: "/api/Session/GetUserTraffic"
                     };
                     let vv = await CallApi(model);
-                    this.userTrafficTblSource = vv.data;
+                    this.userTrafficTblSource = vv.data.res;
+                    this.UserSessionCount = vv.data.resCount;
+                    this.UserSessionRemainCount = vv.data.remainCount;
+                    //alert(this.SelectedSalonId);
 
                 },
                 UserExit: async function () {

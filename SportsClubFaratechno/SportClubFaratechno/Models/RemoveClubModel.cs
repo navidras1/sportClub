@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace SportClubFaratechno.Models
 {
-    public class GetCabinetsWithSatutsModel
+    public class RemoveClubModel
     {
-        public bool? IsEngaged { get; set; }
-        public long salonId { get; set; }
+        public long Id { get; set; }
     }
 }

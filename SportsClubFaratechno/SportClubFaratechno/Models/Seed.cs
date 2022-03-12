@@ -52,10 +52,13 @@ namespace SportClubFaratechno.Models
 
         public static void MigrateAndSeed()
         {
-            var theSportClubFaratechnoDBContext = TheServiceProvider.Instance.GetService<SportClubFaratechnoDBContext>();
+            //var 
+            var ss = TheServiceProvider.Instance.CreateScope();
+            var theSportClubFaratechnoDBContext = ss.ServiceProvider.GetService<SportClubFaratechnoDBContext>();
+            //var theSportClubFaratechnoDBContext = TheServiceProvider.Instance.GetService<SportClubFaratechnoDBContext>();
 
-           //theSportClubFaratechnoDBContext.Database.exec
-;            //var theSportClubFaratechnoDBContext = SportClubFaratechnoDBContext;
+            //theSportClubFaratechnoDBContext.Database.exec
+            ;            //var theSportClubFaratechnoDBContext = SportClubFaratechnoDBContext;
             theSportClubFaratechnoDBContext.Database.Migrate();
             var Now = DateTime.Now;
             var PNow = PersianDate.NowGetWithSlash;

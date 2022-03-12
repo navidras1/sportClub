@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -52,8 +54,10 @@ namespace SportClubFaratechno
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
 #endif
 
-        }, contextLifetime: ServiceLifetime.Transient,
-    optionsLifetime: ServiceLifetime.Singleton);
+        }
+    //            , contextLifetime: ServiceLifetime.Transient,
+    //optionsLifetime: ServiceLifetime.Singleton
+    );
 
             services.AddTransient(typeof(Models.Repository.IGenericRepository<>), typeof(Models.Repository.SportClubRepository<>));
             services.AddTransient(typeof(Models.Repository.SportClubProcedures));
@@ -128,6 +132,10 @@ namespace SportClubFaratechno
         opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
 
+            services.TryAddSingleton<IApiDescriptionGroupCollectionProvider, ApiDescriptionGroupCollectionProvider>();
+            services.TryAddEnumerable(
+                ServiceDescriptor.Transient<IApiDescriptionProvider, DefaultApiDescriptionProvider>());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -140,6 +148,8 @@ namespace SportClubFaratechno
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+
+
             }
 
             app.UseCors("MyPolicy");
@@ -173,6 +183,10 @@ namespace SportClubFaratechno
             Seed.MigrateAndSeed();
 
 
+        }
+        internal static void AddApiExplorerServices(IServiceCollection services)
+        {
+            
         }
     }
 }
